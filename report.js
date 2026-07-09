@@ -1,0 +1,3 @@
+export function Field({label,value,onChange,type='text'}){return <div><label>{label}</label><input type={type} value={value||''} onChange={e=>onChange(e.target.value)}/></div>}
+export function TextArea({label,value,onChange}){return <div><label>{label}</label><textarea value={value||''} onChange={e=>onChange(e.target.value)}/></div>}
+export function SelectField({label,value,onChange,options}){return <div><label>{label}</label><select value={value||''} onChange={e=>onChange(e.target.value)}><option value="">Select...</option>{options.map(o=><option key={o} value={o}>{o}</option>)}</select></div>}
