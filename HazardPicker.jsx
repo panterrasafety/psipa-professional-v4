@@ -1,1 +1,20 @@
-{"name":"PSIPA Professional","short_name":"PSIPA","description":"Panterra Serious Injury Prevention Assessment","start_url":"/","display":"standalone","background_color":"#f4f6f8","theme_color":"#12355b","icons":[{"src":"/icons/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"/icons/icon-512.png","sizes":"512x512","type":"image/png"},{"src":"/icons/apple-touch-icon.png","sizes":"180x180","type":"image/png"}]}
+{
+  "name": "Panterra PSIPA",
+  "short_name": "PSIPA",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4f6f8",
+  "theme_color": "#12355b",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
