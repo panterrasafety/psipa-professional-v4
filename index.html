@@ -1,1 +1,697 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="Panterra PSIPA"/><meta name="theme-color" content="#12355b"/><link rel="manifest" href="/manifest.json"/><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"/><title>PSIPA Professional v4.0.1</title></head><body><div id="root"></div><script type="module" src="/src/main.jsx"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Panterra PSIPA">
+<title>PSIPA Professional v4.3</title>
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--ink:#142033;--muted:#667085;--line:#d8dee8;--brand:#12355b;--accent:#0f766e;--warn:#b45309;--bad:#b42318;--good:#027a48;--chip:#eef4ff;}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;font-size:11pt;line-height:1.35;padding-bottom:72px} 
+header{position:sticky;top:0;z-index:10;background:linear-gradient(135deg,var(--brand),#0b243f);color:white;padding:10px 10px 8px;box-shadow:0 2px 10px #0002} 
+header h1{margin:0;font-size:18px;letter-spacing:.3px} header p{margin:4px 0 0;color:#dbeafe;font-size:11pt}
+.wrap{max-width:980px;margin:0 auto;padding:12px} .card{background:var(--card);border:1px solid var(--line);border-radius:16px;margin:8px 0;padding:10px;box-shadow:0 1px 3px #0000000d}
+.card h2{margin:0 0 12px;font-size:14pt;color:var(--brand)} .sub{color:var(--muted);font-size:11pt;margin:-6px 0 12px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px} @media(max-width:700px){.grid{grid-template-columns:1fr}}
+label{font-weight:650;font-size:11pt;color:#344054;display:block;margin:2px 0 5px} input,select,textarea{width:100%;font:inherit;border:1px solid var(--line);border-radius:10px;padding:6px;background:white;color:var(--ink)} textarea{min-height:52px;resize:vertical} input:focus,select:focus,textarea:focus{outline:2px solid #99f6e4;border-color:var(--accent)}
+.row{border-top:1px solid var(--line);padding:6px 0} .row:first-child{border-top:0} .q{font-weight:650;margin-bottom:8px} .seg{display:flex;gap:8px;flex-wrap:wrap} .seg input{display:none} .seg label{font-weight:700;border:1px solid var(--line);padding:9px 14px;border-radius:999px;margin:0;background:#fff;cursor:pointer} .seg input:checked+label{background:var(--brand);color:#fff;border-color:var(--brand)}
+.tableRow{display:grid;grid-template-columns:1.1fr 1.1fr .7fr 1fr;gap:8px;align-items:start;border-top:1px solid var(--line);padding:10px 0} .controlRow{grid-template-columns:1fr 1.15fr 1.15fr .85fr}.controlBlock{border:1px solid var(--line);border-radius:12px;padding:10px;background:#fbfcfe}.controlBlock h3{font-size:11pt;margin:0 0 8px;color:var(--brand)} @media(max-width:800px){.tableRow,.controlRow{grid-template-columns:1fr}}
+.btnbar{position:fixed;left:0;right:0;bottom:0;background:#fffffff2;backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:10px;display:flex;gap:8px;overflow-x:auto;z-index:20} button,.btn{border:0;border-radius:12px;padding:8px 10px;font-weight:750;font-size:11pt;white-space:nowrap;background:var(--brand);color:white;cursor:pointer} button.secondary{background:#e6edf5;color:var(--brand)} button.danger{background:#fee4e2;color:var(--bad)} button.good{background:var(--good)}
+.percentCalc{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0 14px}.percentCalc input{font-size:18px;font-weight:700;text-align:center}.percentCalc .result{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}.percentCalc .result b{display:block;font-size:24px;color:var(--brand)}.percentCalc .result span{font-size:12px;color:var(--muted)}@media(max-width:900px){.percentCalc{grid-template-columns:repeat(2,1fr)}}@media(max-width:700px){.percentCalc{grid-template-columns:1fr}} .miniScorebox{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:10px 0 14px}.miniMetric{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}.miniMetric b{display:block;font-size:24px;color:var(--brand)}.miniMetric span{font-size:12px;color:var(--muted)}@media(max-width:700px){.miniScorebox{grid-template-columns:1fr}} .scorebox{display:grid;grid-template-columns:repeat(4,1fr);gap:10px} @media(max-width:700px){.scorebox{grid-template-columns:repeat(2,1fr)}} .metric{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center} .metric b{display:block;font-size:24px;color:var(--brand)} .metric span{font-size:12px;color:var(--muted)}
+.status{padding:10px;border-radius:12px;margin-top:10px;font-weight:700} .ok{background:#ecfdf3;color:var(--good)} .caution{background:#fffaeb;color:var(--warn)} .stop{background:#fef3f2;color:var(--bad)}
+.badge{display:inline-block;background:var(--chip);color:var(--brand);padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700;margin-left:6px} .small{font-size:12px;color:var(--muted)}
+canvas{border:1px solid var(--line);border-radius:12px;background:#fff;width:100%;height:140px;touch-action:none} .photoPreview img{max-width:120px;max-height:120px;object-fit:cover;border-radius:10px;border:1px solid var(--line);margin:6px}
+.requiredMissing{border-color:var(--bad)!important;background:#fff7f7!important} details summary{cursor:pointer;font-weight:750;color:var(--brand)}
+@media print{header,.btnbar,.noPrint{display:none!important} body{padding:0;background:white} .card{box-shadow:none;break-inside:avoid} input,select,textarea{border:0;border-bottom:1px solid #888;border-radius:0}}
+
+header{display:flex;align-items:center;gap:16px}
+header .logo{height:52px;width:auto;max-width:260px;object-fit:contain;background:white;padding:4px;border-radius:8px}
+header .titleblock{display:flex;flex-direction:column}
+@media(max-width:700px){header{flex-direction:column;align-items:flex-start}header .logo{height:44px;max-width:220px}}
+
+
+.deficiencyList{display:grid;gap:10px;margin-top:10px}
+.deficiency{border:1px solid var(--line);border-left:6px solid var(--warn);border-radius:12px;padding:10px;background:#fff}
+.deficiency.stop{border-left-color:var(--bad);background:#fff7f7}
+.deficiency.ok{border-left-color:var(--good);background:#f6fef9}
+.deficiency h3{margin:0 0 4px;font-size:11pt;color:var(--brand)}
+.deficiency p{margin:3px 0;font-size:11pt}
+.followGrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px}
+@media(max-width:800px){.followGrid{grid-template-columns:1fr}}
+
+.activityPanel{border:1px solid var(--line);border-radius:14px;background:#fbfcfe;padding:12px;margin-top:12px}
+.activityPanel h3{margin:0 0 8px;font-size:15px;color:var(--brand)}
+
+.wizardCard{border:2px solid var(--accent);background:linear-gradient(180deg,#ffffff,#f0fdfa)}
+.wizardActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.quickHazardBtn{float:right;margin-left:8px;background:var(--accent)!important;color:#fff!important}
+@media(max-width:700px){.quickHazardBtn{float:none;display:inline-block;margin:8px 0 0}}
+.suggestionGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.suggestionBox{border:1px solid var(--line);border-radius:12px;background:white;padding:10px}
+.suggestionBox ul{margin:6px 0 0 18px;padding:0}.suggestionBox li{margin:3px 0}
+@media(max-width:800px){.suggestionGrid{grid-template-columns:1fr}}
+
+
+/* PSIPA compact 11 pt field layout override */
+html, body { font-size: 11pt !important; line-height: 1.25 !important; }
+body { padding-bottom: 64px !important; }
+header { padding: 8px 10px 6px !important; gap: 10px !important; }
+header h1 { font-size: 16px !important; line-height: 1.15 !important; }
+header p { font-size: 11pt !important; margin-top: 2px !important; }
+header .logo { height: 42px !important; max-width: 190px !important; }
+.wrap { padding: 8px !important; }
+.card { margin: 6px 0 !important; padding: 8px !important; border-radius: 10px !important; }
+.card h2 { font-size: 13pt !important; margin-bottom: 6px !important; }
+.sub, .small, .metric span, .miniMetric span, .percentCalc .result span { font-size: 10pt !important; }
+.grid { gap: 6px !important; }
+label { font-size: 11pt !important; margin: 1px 0 3px !important; }
+input, select, textarea { font-size: 11pt !important; padding: 5px 6px !important; border-radius: 7px !important; min-height: 28px !important; }
+textarea { min-height: 44px !important; }
+.row { padding: 5px 0 !important; }
+.q { margin-bottom: 4px !important; }
+.seg { gap: 5px !important; }
+.seg label { padding: 6px 9px !important; font-size: 11pt !important; }
+.tableRow { gap: 6px !important; padding: 6px 0 !important; }
+.controlBlock { padding: 7px !important; border-radius: 9px !important; }
+.controlBlock h3, .activityPanel h3 { font-size: 11pt !important; margin-bottom: 5px !important; }
+.activityPanel, .suggestionBox, .deficiency { padding: 7px !important; border-radius: 9px !important; }
+.suggestionGrid, .followGrid, .miniScorebox, .scorebox, .percentCalc { gap: 6px !important; margin: 6px 0 8px !important; }
+.metric, .miniMetric, .percentCalc .result { padding: 7px !important; border-radius: 9px !important; }
+.metric b, .miniMetric b, .percentCalc .result b { font-size: 18px !important; }
+.btnbar { padding: 7px !important; gap: 6px !important; }
+button, .btn { font-size: 11pt !important; padding: 7px 9px !important; border-radius: 9px !important; }
+.status { padding: 7px !important; margin-top: 6px !important; border-radius: 9px !important; }
+.badge { font-size: 10pt !important; padding: 3px 6px !important; }
+canvas { height: 110px !important; }
+.photoPreview img { max-width: 90px !important; max-height: 90px !important; margin: 4px !important; }
+@media(max-width:700px){
+  header .logo { height: 38px !important; max-width: 180px !important; }
+  .wrap { padding: 6px !important; }
+}
+
+
+/* Combined Work Front Review + HEIC Controls section */
+#workFrontCriticalControlSection details{border:1px solid var(--line);border-radius:9px;padding:7px;margin:6px 0;background:#fbfcfe}
+#workFrontCriticalControlSection summary{font-size:11pt;font-weight:750;color:var(--brand);cursor:pointer}
+#workFrontCriticalControlSection details[open] summary{margin-bottom:5px}
+
+</style>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#12355b">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+</head>
+<body>
+<header><img class='logo' alt='Panterra Safety Consulting logo' src='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QCORXhpZgAATU0AKgAAAAgAAgESAAMAAAABAAEAAIdpAAQAAAABAAAAJgAAAAAABJADAAIAAAAUAAAAXJAEAAIAAAAUAAAAcJKRAAIAAAADMDAAAJKSAAIAAAADMDAAAAAAAAAyMDE5OjAxOjE2IDIwOjQ4OjMzADIwMTk6MDE6MTYgMjA6NDg6MzMAAAD/4QGcaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49J++7vycgaWQ9J1c1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCc/Pg0KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyI+PHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj48cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0idXVpZDpmYWY1YmRkNS1iYTNkLTExZGEtYWQzMS1kMzNkNzUxODJmMWIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyI+PHhtcDpDcmVhdGVEYXRlPjIwMTktMDEtMTZUMjA6NDg6MzM8L3htcDpDcmVhdGVEYXRlPjwvcmRmOkRlc2NyaXB0aW9uPjwvcmRmOlJERj48L3g6eG1wbWV0YT4NCjw/eHBhY2tldCBlbmQ9J3cnPz7/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAD6AmQDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDs6KKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKinuIraIy3EiRRjqznAoAlormL3xtYwEraxSXLDv8AcX8zz+lY1x431GQnyYoIR9Cx/U/0oA9AorzJ/FWsuf8Aj8I9ljUf0pq+KNZU5F634op/pQB6fRXnlv411OIjzlhnHfcuD+lF/wCM9QuQVtlS1X/Z+ZvzP+FAHfT3ENsm+4lSJP7zsAP1rEvPGOl22RE0lww/55rx+ZxXns881xIZJ5Xlc/xOxJqOgDrLrx1cvxa2sUY9ZCWP6YrKn8T6vP1vGQekahf5DNZFFAFiS/vJv9bdzv8A70hNRedL/wA9H/76NMooA2tJ8T3+nOA0huIO8chz+R6ivQNM1O21W2E9q+R0ZT95T6EV5LVvTNSuNLuhcWrYPRlP3WHoaAPW6K5zS/GF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XkwChU+7En90VXu7fUbXXmv7K1S7jlhEbKZAhTB65Pat2igDB06w1D+35r/UAuDAETYRtXJBwO/HqfepprnW7e7mWPT4ruAtmJlmCFR7561sUUAZWk6fPDc3N9fMhu7nG5Y/uooGAPejR7OeC81O4uY9huJ8pyDlAODx9a1aKAMrR7OeC81O4uY9huJ8pyDlAODx9aTTrOePWdTvLhNqzFFi5ByqjGePwrWooAwGt9S0vUrqawtUvLa6bzGTzAjI3fk9q0dOS/LSzai0YZ8BIY8lYwM9+5Of0q9RQBhi61+JnibTYZ/mOyYThVxnjI6n9Ks6VpsthaXBeRHvLh2ldhwu89h7Vp0UAYKXXiJovJbToFl6faDMNn12jmtDSNOXS9OjtVbeVyWb1J61eooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/2Q=='><div class='titleblock'><h1>Panterra PSIPA Field App</h1><p>Panterra Serious Injury Prevention Assessment (PSIPA) • standalone single-file app</p></div></header>
+<div class="wrap">
+<form id="hecaForm">
+<section class="card"><h2>Work Front Identification</h2><div class="grid" id="identFields"></div></section>
+<section class="card wizardCard" id="smartProcessWizard"><h2>Smart Process Wizard <span class="badge">Start here</span></h2><p class="sub">Select the primary work activity before identifying hazards. The wizard displays suggested high-energy hazards and critical controls, then can copy them into the assessment as a starting point.</p><div class="grid"><div><label>Primary Work Activity / Process</label><select name="workActivity" id="workActivity" onchange="renderActivityGuide()"><option value="">Select process</option></select></div><div><label>How to Use</label><div class="small">Choose the process, review the suggestions with the crew, then apply them. Add or remove hazards based on actual field conditions.</div></div></div><div id="activityGuide" class="activityPanel"><h3>No process selected</h3><p class="small">Choose a process to show suggested high-energy hazards and controls.</p></div><div class="wizardActions noPrint"><button type="button" class="good" onclick="useSuggestedHazards()">Apply Suggested Hazards</button><button type="button" class="secondary" onclick="scrollToHazardIdentification()">Continue to Hazard Identification</button></div></section>
+<section class="card" id="hazardIdentification"><h2>High-Energy Hazard Identification <button type="button" class="secondary quickHazardBtn noPrint" onclick="showSuggestedHazards()">Suggested Hazards</button></h2><p class="sub">Answer each pre-job verification item. Any “No” should be resolved before work proceeds.</p><div class="percentCalc">
+  <div><label>Total High-Energy Hazards Present</label><input type="number" inputmode="numeric" min="0" step="1" name="total_he_hazards" id="totalHeHazards" value="0"></div>
+  <div><label>High-Energy Hazards Identified</label><input type="number" inputmode="numeric" min="0" step="1" name="he_hazards_identified" id="heHazardsIdentified" value="0"></div>
+  <div><label>Total Energy Sources Present</label><input type="number" inputmode="numeric" min="0" step="1" name="total_energy_sources" id="totalEnergySources" value="0"></div>
+  <div><label>Energy Sources Clearly Understood by Crew</label><input type="number" inputmode="numeric" min="0" step="1" name="energy_sources_understood" id="energySourcesUnderstood" value="0"></div>
+  <div class="result"><b id="mHighEnergyIdentified">0%</b><span>High-energy hazards identified</span></div>
+  <div class="result"><b id="mEnergyUnderstood">0%</b><span>Energy sources clearly understood by crew</span></div>
+  <div class="result"><b id="mSifReviewStatus">No</b><span>Crew SIF review completed</span></div>
+  <div class="result"><b id="mHazardGap">0</b><span>Unidentified high-energy hazard gap</span></div>
+  <div class="result"><b id="mEnergyGap">0</b><span>Energy source understanding gap</span></div>
+  <div class="result"><b id="mSifSummaryStatus">Pending</b><span>SIF controls summary</span></div>
+</div><div id="checks"></div></section>
+<section class="card" id="sifReviewConfirmation"><h2>SIF Review Confirmation</h2><p class="sub">The crew has reviewed the Serious Injury/Fatality (SIF) potential associated with this work and understands the required critical controls for each identified High Energy Hazard.</p><div class="row"><div class="q">Crew SIF review completed?</div><div class="seg"><input id="sifReviewYes" type="radio" name="sif_review_completed" value="Yes" onchange="calc()"><label for="sifReviewYes">Yes</label><input id="sifReviewNo" type="radio" name="sif_review_completed" value="No" onchange="calc()"><label for="sifReviewNo">No</label></div></div><label>SIF Review Comments</label><textarea name="sif_review_comments"></textarea><div class="miniScorebox"><div class="miniMetric"><b id="mSifDirectSummary">0/0</b><span>Direct controls verified</span></div><div class="miniMetric"><b id="mSifIndirectSummary">0/0</b><span>Indirect controls verified</span></div></div></section>
+<section class="card" id="workFrontCriticalControlSection"><h2>Work Front Hazard Review &amp; Critical Control Verification <button type="button" class="secondary quickHazardBtn noPrint" onclick="showSuggestedHazards()">Suggested Hazards</button></h2><p class="sub">Review the work front and verify that the HEIC critical controls for each identified High Energy Hazard are in place before work starts. This combined section keeps the previous HEIC Controls Verification information in one operational review.</p><details open><summary>Part A - Work Front Hazard Review</summary><p class="sub">Select the applicable High Energy Hazard for each work-front exposure and confirm whether the exposure is controlled.</p><div id="workRows"></div><button type="button" class="secondary noPrint" onclick="addWorkRow()">+ Add Work Front Hazard Row</button></details><details open style="margin-top:8px"><summary>Part B - HEIC Critical Control Verification</summary><p class="sub">Add each high-energy hazard, identify the equipment type and hazard source, then select up to five hazard-specific direct controls, indirect controls, and additional/site-specific controls.</p><div id="controlRows"></div><button type="button" class="secondary noPrint" onclick="addControlRow()">+ Add Hazard Row</button></details></section>
+<section class="card"><h2>Verification Dashboard / PSIPA Score</h2><div class="scorebox"><div class="metric"><b id="mHazards">0</b><span>High Energy Hazards Identified</span></div><div class="metric"><b id="mEffective">0</b><span>Effective High Energy Controls</span></div><div class="metric"><b id="mScore">0%</b><span>PSIPA Score</span></div><div class="metric"><b id="mOpen">0</b><span>Open Control Gaps</span></div></div><div id="scoreStatus" class="status caution">Start assessment to calculate score.</div><details style="margin-top:12px"><summary>Verification definitions</summary><div class="small"><p><b>Direct Controls:</b> Controls that eliminate, isolate, physically prevent, or directly interrupt the high-energy hazard.</p><p><b>Indirect Controls:</b> Controls that reduce exposure, improve awareness, or support safe execution when direct controls are in place.</p><p><b>Verified:</b> The control is present, functioning, and confirmed at the work front.</p><p><b>Not Verified:</b> The control is missing, ineffective, unclear, or cannot be confirmed. Treat as a deficiency or stop-work trigger where life-critical controls are affected.</p><p><b>SIF Review:</b> Crew confirmation that Serious Injury/Fatality potential was discussed and that required critical controls are understood.</p></div></details></section>
+<section class="card"><h2>Identified Deficiencies & Follow-Up <span class="badge">Auto generated</span></h2><p class="sub">This section is populated from the assessment data. Review each deficiency, assign an owner, and document follow-up actions before closing the assessment.</p><div id="deficiencySummary" class="deficiencyList"></div><div class="followGrid"><div><label>Follow-Up Owner</label><input name="followup_owner" placeholder="Name / role"></div><div><label>Target Completion Date</label><input type="date" name="followup_due_date"></div><div><label>Status</label><select name="followup_status"><option>Open</option><option>In Progress</option><option>Complete</option><option>Escalated</option></select></div></div><label style="margin-top:12px">Follow-Up Actions / Corrective Action Plan</label><textarea name="followup_actions" placeholder="Document corrective actions, temporary controls, permanent controls, escalation, verification method, and close-out notes..."></textarea></section>
+<section class="card"><h2>Photos / Evidence</h2><input type="file" id="photos" accept="image/*" multiple capture="environment"><div class="photoPreview" id="photoPreview"></div></section>
+<section class="card"><h2>Appendix A - Suggested High-Energy Hazards by Process</h2><p class="sub">Reference guide for common field activities. This appendix supports hazard identification and does not replace the job-specific PSIPA review.</p><div id="appendixGuide" class="activityPanel"></div></section><section class="card"><h2>Sign-Off</h2><div class="grid"><div><label>Supervisor Signature</label><canvas id="sigSupervisor"></canvas><button type="button" class="secondary noPrint" onclick="clearSig('sigSupervisor')">Clear Supervisor</button></div><div><label>Assessor Signature</label><canvas id="sigAssessor"></canvas><button type="button" class="secondary noPrint" onclick="clearSig('sigAssessor')">Clear Assessor</button></div></div><label style="margin-top:12px">Additional Notes / Actions Required</label><textarea name="finalNotes"></textarea></section>
+</form>
+</div>
+<div class="btnbar noPrint"><button type="button" onclick="validateAndPrint()">PDF / Print</button><button type="button" class="secondary" onclick="emailAssessment()">Email</button><button type="button" class="good" onclick="saveLocal()">Save</button><button type="button" class="secondary" onclick="loadLocal()">Load</button><button type="button" class="secondary" onclick="exportJSON()">Export</button><button type="button" class="secondary" onclick="importJSON()">Import</button><button type="button" class="danger" onclick="resetForm()">Reset</button></div>
+<script>
+const DATA={"identChecks": ["All high-energy hazards identified?", "Energy sources clearly understood by crew?", "JSA/FLHA completed and reviewed?", "Work front inspected before work begins?"], "workHazards": ["Mobile Equipment Interaction", "Suspended Loads", "Pressure Release", "Electrical Exposure", "Excavation / Ground Disturbance", "Confined Space", "Working at Height", "SIMOPS", "Hazardous Atmosphere", "Dropped Objects"], "directControls": ["Eliminate energy source", "Substitute lower-energy method", "De-energize equipment", "Mechanical isolation", "Electrical isolation", "LOTO applied and verified", "Line blind / spade installed", "Double block and bleed verified", "Depressurize / drain / vent / purge", "Stored energy released", "Mechanical restraint / blocking / cribbing", "Engineered physical barrier / fixed guarding", "Interlock / automatic shutdown", "Remote operation / remove worker from line of fire", "Certified anchor / fall protection system", "Engineered lift plan with rated rigging", "Vehicle / pedestrian physical separation", "Confined space positive isolation", "Continuous gas monitoring with alarm", "Grounding / bonding", "Other direct control"], "indirectControls": ["Permit issued and reviewed", "JSA / FLHA reviewed with crew", "Procedure / safe work practice followed", "Competent worker assigned", "Supervisor verification", "Spotter / signal person", "Warning signs / barricade tape", "Administrative exclusion zone", "Radio / hand-signal communication plan", "Pre-job safety meeting", "SIMOPS coordination", "Inspection / checklist completed", "PPE selected and worn", "Atmospheric test documented", "Emergency response / rescue plan ready", "Stop-work trigger identified", "Other indirect control"], "controls": ["Energy Elimination", "Mechanical Isolation", "Electrical Isolation", "Double Block and Bleed", "Line Blind/Spade", "LOTO Applied", "Stored Energy Release", "Pressure Bleed Off", "Grounding/Bonding", "Fixed Guarding", "Temporary Barrier", "Interlocked System", "Remote Operation", "Spotter Required", "Exclusion Zone", "Fall Protection System", "Vehicle Separation", "Engineered Lift Plan", "Confined Space Isolation", "Gas Monitoring", "Other"], "hazards": ["Electrical Energy", "Mechanical Energy", "Hydraulic Energy", "Pneumatic Energy", "Stored Energy", "Gravity", "Pressure Release", "Line of Fire", "Suspended Load", "Mobile Equipment", "Vehicle Interaction", "Rotating Equipment", "Excavation/Trenching", "Confined Space", "Working at Heights", "Dropped Objects", "Chemical Exposure", "Thermal Energy", "Steam", "Hot Work", "Fire / Explosion", "Compressed Gas Cylinders", "Static Electricity", "Vacuum Pressure", "Toxic Atmosphere", "Flammable Atmosphere", "Oxygen Deficiency", "Engulfment", "Benzene Exposure", "H2S Exposure", "Pyrophoric Material", "Ground Collapse", "Ground Failure", "Underground Utilities", "Water Ingress", "Structural Collapse", "Manual Handling", "Weather / Wind Exposure", "Blind Spots", "Rollover", "Noise", "Hose Failure", "Unexpected Start-up", "SIMOPS", "Radiation", "Other"], "likelihoods": ["5 - Almost Certain", "4 - Likely", "3 - Possible", "2 - Unlikely", "1 - Rare"], "consequences": ["A - Insignificant", "B - Low", "C - Moderate", "D - High", "E - Catastrophic"]};
+const ACTIVITY_GUIDE={
+ "Welding / Hot Work":{
+  hazards:["Electrical Energy","Thermal Energy","Fire / Explosion","Compressed Gas Cylinders","Stored Energy","Chemical Exposure","Radiation","Line of Fire"],
+  controls:["Hot work permit issued and reviewed","Fire watch assigned","Pre-job and continuous gas testing as required","Fire extinguishers staged and inspected","Compressed cylinders secured upright","Flashback arrestors installed","Ventilation confirmed","Welding screens / UV exposure control","LOTO or isolation verified where equipment could energize"]
+ },
+ "Crane Lifts":{
+  hazards:["Suspended Load","Gravity","Mechanical Energy","Hydraulic Energy","Mobile Equipment","Line of Fire","Dropped Objects","Electrical Energy","Ground Failure"],
+  controls:["Lift plan reviewed","Qualified operator confirmed","Signal person assigned","Rigging inspected and rated","Load chart verified","Exclusion zone established","Tag lines used where safe","Ground bearing / outrigger setup verified","Power line clearance confirmed","Weather and wind limits confirmed"]
+ },
+ "Working at Heights":{
+  hazards:["Gravity","Working at Heights","Dropped Objects","Suspended Load","Line of Fire","Weather / Wind Exposure"],
+  controls:["Fall protection plan reviewed","Anchorage verified","Harness and lanyard inspected","Rescue plan ready","Controlled access / barricades below","Tool tethering used","Ladders or access systems inspected","Weather conditions reviewed"]
+ },
+ "Scaffolding":{
+  hazards:["Working at Heights","Gravity","Dropped Objects","Structural Collapse","Manual Handling","Line of Fire"],
+  controls:["Scaffold tag verified","Competent inspection complete","Load limits understood","Guardrails / midrails / toe boards installed","Safe access and egress confirmed","Fall protection used where required","Exclusion zone below scaffold","Unauthorized modifications prohibited"]
+ },
+ "Confined Space Entry":{
+  hazards:["Confined Space","Toxic Atmosphere","Flammable Atmosphere","Oxygen Deficiency","Engulfment","Mechanical Energy","Electrical Energy","Pressure Release","Thermal Energy"],
+  controls:["Confined space permit issued","Atmospheric testing completed","Continuous gas monitoring used","Positive isolation / LOTO verified","Ventilation established","Rescue plan and equipment ready","Attendant assigned","Communication method confirmed","Entry/exit access maintained"]
+ },
+ "Tank Cleaning":{
+  hazards:["Confined Space","Chemical Exposure","Toxic Atmosphere","Flammable Atmosphere","Benzene Exposure","H2S Exposure","Static Electricity","Pressure Release","Vacuum Pressure","Pyrophoric Material"],
+  controls:["Tank isolation verified","Gas testing and continuous monitoring","Benzene / exposure monitoring as required","Bonding and grounding confirmed","Ventilation established","Respiratory protection selected","Rescue equipment staged","Pyrophoric material controls considered","PPE selected for product hazards","Waste handling plan reviewed"]
+ },
+ "Excavations":{
+  hazards:["Excavation/Trenching","Ground Collapse","Underground Utilities","Mobile Equipment","Pressure Release","Water Ingress","Dropped Objects","Line of Fire"],
+  controls:["Ground disturbance permit issued","Utility locates reviewed and marked","Shoring / trench box / sloping verified","Safe access and egress provided","Spoil pile setback maintained","Daily competent inspection complete","Equipment / worker separation established","Atmospheric testing where required","Water control plan considered"]
+ },
+ "Pipe Fitting":{
+  hazards:["Pressure Release","Stored Energy","Mechanical Energy","Line of Fire","Thermal Energy","Hydraulic Energy","Suspended Load","Chemical Exposure"],
+  controls:["Positive isolation verified","LOTO applied and verified","Line break procedure reviewed","Pressure bled down / zero energy verified","Drain / vent / purge complete","Correct gasket / bolting controls","Proper lifting or support used","Line-of-fire position reviewed","PPE selected for product and temperature"]
+ },
+ "Mobile Equipment":{
+  hazards:["Mobile Equipment","Vehicle Interaction","Line of Fire","Stored Energy","Hydraulic Energy","Gravity","Rollover","Blind Spots"],
+  controls:["Pre-use inspection complete","Seat belt used","Spotter assigned where required","Traffic control plan implemented","Pedestrian / equipment separation","Backup alarm and lights functioning","Park brake / wheel chocks as required","No-go zones communicated","Ground conditions reviewed"]
+ },
+ "Vacuum Trucks":{
+  hazards:["Vacuum Pressure","Pressure Release","Static Electricity","Flammable Atmosphere","Chemical Exposure","Hose Failure","Mobile Equipment","Noise","Line of Fire"],
+  controls:["Bonding and grounding confirmed","Hoses inspected and rated","Pressure relief / vacuum protection verified","Gas testing completed","Safe truck positioning","Emergency shutdown reviewed","PPE selected for product hazards","Exclusion zone around hoses and connections","Communication between operator and crew","Waste manifest / disposal controls reviewed"]
+ },
+ "Other":{
+  hazards:["Stored Energy","Line of Fire","Gravity","Mechanical Energy","Pressure Release","Electrical Energy","Chemical Exposure","Mobile Equipment"],
+  controls:["Crew identifies task-specific high-energy hazards","Supervisor verifies critical controls before work starts","JSA / FLHA reviewed with crew","Stop-work trigger points discussed","Direct controls documented for each credible SIF exposure","Barriers, isolation, or physical separation verified where applicable","Changes in scope require reassessment"]
+ }
+};
+
+
+const SITE_CONTROL_LIBRARY={
+ "Electrical Energy":["Test-before-touch completed","Zero voltage test verified","Arc flash boundary established","Electrical permit verified","Qualified electrical worker assigned","Insulated tools used","Temporary power inspected","Grounding installed","Client electrical procedure followed","Other / Site-Specific Control"],
+ "Mechanical Energy":["Pinch points guarded","Stored mechanical energy released","Blocking / cribbing installed","Mechanical restraint verified","Rotating equipment isolated","Machine guarding verified","Equipment supported before work","Chocks installed","Client mechanical procedure followed","Other / Site-Specific Control"],
+ "Hydraulic Energy":["Hydraulic pressure relieved","Hydraulic isolation verified","Cylinders mechanically blocked","Hoses inspected and rated","Stored hydraulic energy released","Leak check completed","Line of fire reviewed","Client hydraulic procedure followed","Other / Site-Specific Control"],
+ "Pneumatic Energy":["Air supply isolated","Pneumatic pressure relieved","Hoses inspected and restrained","Whip checks installed","Stored pneumatic energy released","Bleed-off point identified","Client pneumatic procedure followed","Other / Site-Specific Control"],
+ "Stored Energy":["Stored energy released","Zero energy verification completed","Springs restrained or released","Capacitors discharged","Equipment blocked / restrained","Energy release path controlled","Client stored energy procedure followed","Other / Site-Specific Control"],
+ "Gravity":["Fall protection system verified","Anchor point verified","Dropped object controls installed","Load secured against movement","Blocking / cribbing installed","Exclusion zone below work established","Rescue plan reviewed","Other / Site-Specific Control"],
+ "Pressure Release":["Pressure test procedure reviewed","Pressure relief device verified","Test boundary established","Hose restraints installed","Bleed-off point identified","Pressure monitoring assigned","Secondary isolation installed","Line walk completed","Client pressure procedure followed","Other / Site-Specific Control"],
+ "Line of Fire":["Body position reviewed","Exclusion zone established","Barricades installed","Remote operation used where possible","Spotter assigned","Communication plan verified","Stored energy release path identified","Other / Site-Specific Control"],
+ "Suspended Load":["Lift plan reviewed","Rigging inspected and rated","Exclusion zone established","Tag line used where safe","Signal person assigned","Load path cleared","No worker under suspended load","Weather/wind limits verified","Other / Site-Specific Control"],
+ "Mobile Equipment":["Traffic management plan implemented","Spotter assigned","Pedestrian/equipment separation established","Backup alarm verified","Cameras operational","Operator competency verified","Swing radius barricaded","Parking brake verified","Ground conditions reviewed","Other / Site-Specific Control"],
+ "Vehicle Interaction":["Vehicle/pedestrian separation verified","Traffic control implemented","Spotter assigned","High-visibility PPE verified","Travel path reviewed","Parking brake/wheel chocks verified","Blind spot review completed","Other / Site-Specific Control"],
+ "Rotating Equipment":["Rotating equipment isolated","Guarding installed","LOTO verified","Zero motion verified","Coupling guarded","No loose clothing/jewelry confirmed","Client rotating equipment procedure followed","Other / Site-Specific Control"],
+ "Excavation/Trenching":["Utility locates verified","Competent person inspection completed","Shoring / trench box installed","Safe access/egress installed","Spoil pile setback maintained","Daily excavation inspection documented","Water control plan reviewed","Atmospheric testing completed if required","Other / Site-Specific Control"],
+ "Confined Space":["Entry permit complete","Attendant assigned","Entry supervisor assigned","Atmospheric testing completed","Continuous gas monitoring established","Ventilation operational","Retrieval system installed","Rescue team available","Communication tested","Other / Site-Specific Control"],
+ "Working at Heights":["Fall protection inspected","Anchor points verified","Harness and lanyard inspected","Rescue plan for working at heights reviewed","Dropped object controls installed","Access system inspected","Weather conditions acceptable","Other / Site-Specific Control"],
+ "Dropped Objects":["Tool lanyards installed","Toe boards/netting installed","Drop zone established","Materials secured","Overhead work communicated","Hard hats verified","Exclusion zone below work","Other / Site-Specific Control"],
+ "Chemical Exposure":["SDS reviewed","Chemical compatibility verified","PPE verified","Eyewash/shower available","Spill kit available","Ventilation verified","Exposure monitoring established","Client chemical procedure followed","Other / Site-Specific Control"],
+ "Thermal Energy":["Hot surface identified","Burn protection PPE verified","Heat shielding installed","Cooling period established","Surface temperature verified","Fire watch assigned if required","Other / Site-Specific Control"],
+ "Steam":["Steam isolation verified","Condensate drained","Pressure relieved","Thermal PPE verified","Line break procedure reviewed","Burn exclusion area established","Other / Site-Specific Control"],
+ "Hot Work":["Hot work permit approved","Fire watch assigned","Fire extinguisher available","Gas test completed","Ignition sources controlled","Combustibles removed or protected","Welding screens installed","Other / Site-Specific Control"],
+ "Fire / Explosion":["Gas testing completed","Ignition sources controlled","Bonding/grounding verified","Fire protection available","Flammable materials controlled","Emergency response reviewed","Exclusion zone established","Other / Site-Specific Control"],
+ "Compressed Gas Cylinders":["Cylinders secured upright","Caps installed when not in use","Regulators inspected","Flashback arrestors installed","Cylinder segregation verified","Hoses inspected","Other / Site-Specific Control"],
+ "Static Electricity":["Bonding and grounding confirmed","Static dissipative equipment used","Flow rates controlled","Ignition sources controlled","Continuity checked","Other / Site-Specific Control"],
+ "Vacuum Pressure":["Vacuum relief verified","Hoses inspected and rated","Hose restraints installed","Safe truck positioning","Emergency shutdown reviewed","Exclusion zone around hoses","Other / Site-Specific Control"],
+ "Toxic Atmosphere":["Atmospheric testing completed","Continuous gas monitoring established","Respiratory protection verified","Ventilation established","Exposure limits reviewed","Rescue plan available","Other / Site-Specific Control"],
+ "Flammable Atmosphere":["LEL testing completed","Continuous gas monitoring established","Ignition sources controlled","Bonding/grounding verified","Ventilation established","Hot work controls verified","Other / Site-Specific Control"],
+ "Oxygen Deficiency":["Oxygen testing completed","Continuous gas monitoring established","Ventilation established","SCBA/SABA available if required","Entry rescue plan verified","Other / Site-Specific Control"],
+ "Engulfment":["Engulfment source isolated","Material flow stopped and locked out","Rescue plan reviewed","Attendant assigned","Safe access/egress verified","Other / Site-Specific Control"],
+ "Benzene Exposure":["Benzene monitoring completed","Respiratory protection fit verified","Chemical PPE verified","Exposure control plan reviewed","Decontamination method available","SDS reviewed","Other / Site-Specific Control"],
+ "H2S Exposure":["H2S monitor bump test verified","Respiratory protection available","Wind direction / escape route reviewed","Rescue plan reviewed","Continuous monitoring established","Other / Site-Specific Control"],
+ "Pyrophoric Material":["Pyrophoric material controls reviewed","Keep-wet procedure established","Ignition sources controlled","Fire protection staged","Waste handling plan reviewed","Other / Site-Specific Control"],
+ "Ground Collapse":["Protective system installed","Competent person inspection completed","Spoil setback maintained","Water ingress controlled","Vibration/loading reviewed","Other / Site-Specific Control"],
+ "Ground Failure":["Ground bearing verified","Outrigger pads/mats installed","Slope/soil conditions reviewed","Equipment positioning verified","Weather impacts reviewed","Other / Site-Specific Control"],
+ "Underground Utilities":["Utility locate complete","Hydrovac/daylighting completed","Hand exposure used where required","Permit verified","Utility owner contacted if required","Other / Site-Specific Control"],
+ "Water Ingress":["Water control plan established","Pump available","Weather forecast reviewed","Trench/excavation inspected","Access/egress maintained","Other / Site-Specific Control"],
+ "Structural Collapse":["Structure inspected by competent person","Load limits verified","Temporary support installed","Unauthorized modifications prohibited","Exclusion zone established","Other / Site-Specific Control"],
+ "Manual Handling":["Mechanical assist used","Team lift planned","Load weight confirmed","Body positioning reviewed","Path of travel cleared","Other / Site-Specific Control"],
+ "Weather / Wind Exposure":["Weather conditions reviewed","Wind limits confirmed","Lightning plan reviewed","Heat/cold stress controls implemented","Work paused if limits exceeded","Other / Site-Specific Control"],
+ "Blind Spots":["Spotter assigned","Cameras/mirrors verified","Pedestrian route separated","Communication plan established","No-go zones marked","Other / Site-Specific Control"],
+ "Rollover":["Ground conditions reviewed","Slope limits followed","Seatbelt used","Load secured","Operator competency verified","Other / Site-Specific Control"],
+ "Noise":["Hearing protection verified","Noise area identified","Exposure duration limited","Communication method established","Other / Site-Specific Control"],
+ "Hose Failure":["Hoses inspected and rated","Whip checks/restraints installed","Pressure rating verified","Exclusion zone established","Hose routing protected","Other / Site-Specific Control"],
+ "Unexpected Start-up":["LOTO verified","Start controls disabled","Try-start completed","Stored energy released","Affected workers notified","Other / Site-Specific Control"],
+ "SIMOPS":["SIMOPS coordination completed","Conflicting work reviewed","Communication plan established","Permit interactions reviewed","Stop-work triggers agreed","Other / Site-Specific Control"],
+ "Radiation":["Radiation work permit verified","Controlled area established","Dosimeter issued","Radiation survey completed","Qualified technician present","Time/distance/shielding reviewed","Other / Site-Specific Control"],
+ "Other":["Client procedure reviewed","Site orientation completed","Supervisor verification completed","Task-specific control documented","Stop-work trigger identified","Other / Site-Specific Control"]
+};
+
+const EQUIPMENT_TYPES=["Pipeline","Vessel","Tank","Pump","Compressor","Valve / Piping","Electrical Panel","MCC / Switchgear","Generator / Temporary Power","Scaffold / Work Platform","Excavation / Trench","Crane / Hoisting Equipment","Mobile Equipment","Vacuum Truck","Confined Space","Hot Work Area","Other"];
+const DIRECT_CONTROL_LIBRARY={
+ "Electrical Energy":["Electrical isolation verified","LOTO applied and verified","Test-before-touch completed","Voltage detector function checked","Voltage verified absent","Grounding installed","Arc flash boundary established","Covers/barriers installed","GFCI protection verified","Extension cords inspected","Temporary power inspected","Qualified electrical worker assigned","Other direct control"],
+ "Pressure Release":["Positive isolation / blind or spade installed","Double block and bleed verified","Pressure relieved / vented","Bleed point identified","Pressure gauge verified","Pressure relief installed","Test boundary established","Hose restraints / whip checks installed","Line walk completed","Zero energy verified","Pressure monitoring assigned","Other direct control"],
+ "Mechanical Energy":["Mechanical isolation verified","LOTO applied and verified","Stored energy released","Equipment blocked / cribbed","Mechanical restraint installed","Rotating equipment isolated","Guards installed","Pinch points guarded","Chocks installed","Load secured","Other direct control"],
+ "Hydraulic Energy":["Hydraulic isolation verified","Hydraulic pressure relieved","Cylinders mechanically blocked","Stored hydraulic energy released","Hoses inspected and rated","Leak check completed","Line of fire controlled","Other direct control"],
+ "Pneumatic Energy":["Air supply isolated","Pneumatic pressure relieved","Hoses restrained / whip checks installed","Stored pneumatic energy released","Bleed-off point identified","Other direct control"],
+ "Stored Energy":["All energy sources isolated","Zero energy verified","Stored energy released","Springs restrained or released","Capacitors discharged","Equipment blocked / restrained","Try-start completed","Other direct control"],
+ "Gravity":["Fall protection system installed","Anchor points verified","Guardrails installed","Load secured against movement","Blocking / cribbing installed","Dropped object controls installed","Exclusion zone below work established","Other direct control"],
+ "Working at Heights":["Fall protection inspected","Certified anchor point verified","100% tie-off maintained","Guardrails installed","Scaffold/tag inspection complete","Ladder secured","Dropped object controls installed","Other direct control"],
+ "Suspended Load":["Engineered lift plan reviewed","Rigging inspected and rated","Load weight verified","Crane capacity verified","Exclusion zone established","No worker under suspended load","Tag line used where safe","Other direct control"],
+ "Mobile Equipment":["Pre-use inspection completed","Brakes tested","Backup alarm verified","Cameras/mirrors operational","Seatbelt worn","Travel path inspected","Swing radius barricaded","Parking brake verified","Other direct control"],
+ "Vehicle Interaction":["Vehicle/pedestrian physical separation","Traffic control implemented","Travel route established","Spotter assigned where required","Wheel chocks / parking brake verified","Other direct control"],
+ "Excavation/Trenching":["Utility locate verified","Daylighting / hydrovac completed","Protective system installed","Trench box / shoring installed","Safe access/egress installed","Spoil pile setback maintained","Water accumulation controlled","Competent person inspection completed","Other direct control"],
+ "Confined Space":["Entry permit complete","Positive isolation verified","Atmospheric testing completed","Continuous gas monitoring established","Ventilation operational","Retrieval system installed","Attendant assigned","Rescue equipment available","Other direct control"],
+ "Chemical Exposure":["SDS reviewed","Chemical compatibility verified","Chemical-resistant PPE verified","Respiratory protection verified","Ventilation established","Eyewash/shower available","Spill kit available","Exposure monitoring established","Other direct control"],
+ "Benzene Exposure":["Benzene assessment completed","Benzene monitoring completed","Respiratory protection fit verified","Chemical PPE verified","Ventilation established","Decontamination method available","Exposure control plan reviewed","Other direct control"],
+ "H2S Exposure":["H2S monitor bump test verified","Continuous H2S monitoring established","Respiratory protection available","Wind direction / escape route reviewed","Rescue plan reviewed","SCBA/SABA staged where required","Other direct control"],
+ "Thermal Energy":["Hot surface identified","Burn protection PPE verified","Heat shielding installed","Cooling period established","Surface temperature verified","Other direct control"],
+ "Hot Work":["Hot work permit approved","Gas test completed","Ignition sources controlled","Fire watch assigned","Fire extinguisher available","Combustibles removed or protected","Welding screens installed","Other direct control"],
+ "Fire / Explosion":["Gas testing completed","Ignition sources controlled","Bonding/grounding verified","Fire protection available","Flammable material controlled","Exclusion zone established","Other direct control"],
+ "Static Electricity":["Bonding and grounding verified","Continuity checked","Static dissipative equipment used","Flow rates controlled","Ignition sources controlled","Other direct control"],
+ "Vacuum Pressure":["Vacuum relief verified","Hoses inspected and rated","Hose restraints installed","Emergency shutdown reviewed","Safe truck positioning","Other direct control"],
+ "Radiation":["Radiation work permit verified","Controlled area established","Dosimeter issued","Radiation survey completed","Qualified technician present","Shielding installed","Other direct control"],
+ "Other":["Task-specific direct control documented","Client procedure followed","Supervisor verified direct control","Stop-work trigger identified","Other direct control"]
+};
+const INDIRECT_CONTROL_LIBRARY={
+ "Electrical Energy":["Electrical permit verified","Arc-rated PPE worn","Warning signs posted","Barricades installed","Emergency contact available","Client electrical procedure followed","Pre-job briefing completed","Other indirect control"],
+ "Pressure Release":["Barricades installed","Exclusion zone maintained","Communications established","Emergency response reviewed","Work permit verified","Spotter assigned","Client pressure procedure followed","Other indirect control"],
+ "Mechanical Energy":["Pre-job meeting completed","Supervisor verification","Warning signs posted","PPE selected and worn","Procedure reviewed","Communication plan established","Other indirect control"],
+ "Gravity":["Rescue plan reviewed","Tool lanyards used","Hard hats verified","Drop zone communicated","Spotter assigned","Weather assessment completed","Other indirect control"],
+ "Working at Heights":["Rescue plan for heights reviewed","Weather conditions acceptable","Barricades below work","Tool tethering reviewed","Competent worker assigned","Other indirect control"],
+ "Suspended Load":["Signal person assigned","Communication plan verified","Weather/wind limits reviewed","Lift area controlled","SIMOPS reviewed","Other indirect control"],
+ "Mobile Equipment":["Spotter assigned","Traffic management plan reviewed","High-visibility PPE verified","Radio communication established","Pedestrian controls reviewed","Other indirect control"],
+ "Excavation/Trenching":["Excavation permit verified","Daily inspection documented","Atmospheric monitoring if required","Rescue plan reviewed","Access control established","Other indirect control"],
+ "Confined Space":["Entry supervisor assigned","Attendant present","Communication tested","Rescue plan reviewed","Emergency contacts verified","Other indirect control"],
+ "Chemical Exposure":["SDS communicated to crew","Exposure limits reviewed","Decontamination plan reviewed","Waste handling reviewed","Emergency response reviewed","Other indirect control"],
+ "Benzene Exposure":["Benzene hazard communicated","Exposure control plan reviewed","Decon plan reviewed","Medical/emergency plan understood","Other indirect control"],
+ "H2S Exposure":["H2S hazard briefing completed","Muster point identified","Escape route reviewed","Buddy system implemented","Emergency communication verified","Other indirect control"],
+ "Hot Work":["Fire watch briefed","Permit conditions reviewed","Emergency response reviewed","Area monitoring assigned","Other indirect control"],
+ "Fire / Explosion":["Emergency response reviewed","Muster point identified","Area access controlled","Permit conditions reviewed","Other indirect control"],
+ "Radiation":["ALARA reviewed","Access log maintained","Radiation signage posted","Emergency procedure reviewed","Other indirect control"],
+ "Other":["JSA / FLHA reviewed with crew","Supervisor verification completed","Procedure reviewed","Competent worker assigned","Stop-work trigger identified","Other indirect control"]
+};
+function mergedControls(primary, general){return [...new Set([...(primary||[]), ...general])];}
+function directControlsForHazard(hazard){return mergedControls(DIRECT_CONTROL_LIBRARY[hazard], ["Eliminate energy source","LOTO applied and verified","Zero energy verified","Engineered physical barrier / fixed guarding","Other direct control"]);}
+function indirectControlsForHazard(hazard){return mergedControls(INDIRECT_CONTROL_LIBRARY[hazard], ["Permit issued and reviewed","JSA / FLHA reviewed with crew","Supervisor verification","Communication plan established","Stop-work trigger identified","Other indirect control"]);}
+
+const GENERAL_SITE_CONTROLS=["Client procedure reviewed","Site-specific procedure reviewed","Supervisor verification completed","Pre-job meeting completed","Crew roles confirmed","Stop-work trigger identified","Other / Site-Specific Control"];
+function siteControlOptionsForHazard(hazard){
+ const list=SITE_CONTROL_LIBRARY[hazard]||GENERAL_SITE_CONTROLS;
+ return [...new Set(list)];
+}
+function siteControlOpts(hazard,placeholder='Select additional/site-specific control'){
+ return opt(siteControlOptionsForHazard(hazard),placeholder);
+}
+function refreshSelectOptions(sel, html){
+ if(!sel) return;
+ const current=sel.value;
+ sel.innerHTML=html;
+ if(current && [...sel.options].some(o=>o.value===current || o.textContent===current)) sel.value=current;
+ else sel.value='';
+}
+function updateSiteControlDropdown(row){
+ updateControlDropdowns(row);
+}
+function updateControlDropdowns(row){
+ const hazard=rowField(row,'ctrl','hazard')?.value||'';
+ for(let n=1;n<=5;n++){
+   refreshSelectOptions(rowField(row,'ctrl','direct'+n), directOpts(hazard, 'Select direct control '+n));
+   refreshSelectOptions(rowField(row,'ctrl','indirect'+n), indirectOpts(hazard, 'Select indirect control '+n));
+   refreshSelectOptions(rowField(row,'ctrl','siteControl'+n), siteControlOpts(hazard, n===1?'Select additional/site-specific control':'Optional additional/site-specific control'));
+ }
+}
+function updateAllSiteControlDropdowns(){
+ document.querySelectorAll('.controlRow').forEach(updateSiteControlDropdown);
+}
+
+const idFields=['Project / Facility','Work Front / Area','Unit / Equipment','Specific Task','Date','Supervisor','Assessor','Contractor / Crew','Permit Number','JSA / FLHA Reference'];
+const riskClass={'Low':'ok','Moderate':'caution','High':'stop','Critical':'stop'};
+function safeName(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'')}
+function opt(list,placeholder='Select'){return '<option value="">'+placeholder+'</option>'+list.map(x=>`<option>${x}</option>`).join('')}
+function directOpts(hazard='',placeholder='Select direct control'){return opt(directControlsForHazard(hazard),placeholder)}
+function indirectOpts(hazard='',placeholder='Select indirect control'){return opt(indirectControlsForHazard(hazard),placeholder)}
+function equipmentTypeOpts(placeholder='Select equipment type'){return opt(EQUIPMENT_TYPES,placeholder)}
+function init(){
+ document.getElementById('identFields').innerHTML=idFields.map(f=>`<div><label>${f}</label><input ${f==='Date'?'type="date"':'type="text"'} name="${safeName(f)}" ${['Project / Facility','Work Front / Area','Specific Task','Date','Supervisor','Assessor'].includes(f)?'data-required="1"':''}></div>`).join('');
+ document.querySelector('[name=date]').valueAsDate=new Date(); fillActivitySelect(); ['totalHeHazards','heHazardsIdentified','totalEnergySources','energySourcesUnderstood'].forEach(id=>{const e=document.getElementById(id); if(e)e.value='0'});
+ document.getElementById('checks').innerHTML=DATA.identChecks.map((q,i)=>`<div class="row"><div class="q">${q}</div><div class="seg"><input id="chk${i}y" type="radio" name="chk_${i}" value="Yes"><label for="chk${i}y">Yes</label><input id="chk${i}n" type="radio" name="chk_${i}" value="No"><label for="chk${i}n">No</label><input id="chk${i}a" type="radio" name="chk_${i}" value="N/A"><label for="chk${i}a">N/A</label></div><label>Comments</label><textarea name="chk_${i}_comments"></textarea></div>`).join('');
+ for(let i=0;i<12;i++) addControlRow();
+ document.getElementById('workRows').innerHTML='';
+ for(let i=0;i<10;i++) addWorkRow();
+ document.getElementById('hecaForm').addEventListener('input',calc); document.getElementById('hecaForm').addEventListener('change',function(e){ if(e.target && e.target.name && e.target.name.match(/^ctrl_\d+_hazard$/)){ updateSiteControlDropdown(e.target.closest('.controlRow')); } calc();});
+ setupSig('sigSupervisor'); setupSig('sigAssessor'); setupPhotos(); calc();
+}
+
+let workIndex=0;
+
+function fillActivitySelect(){
+ const sel=document.getElementById('workActivity');
+ if(!sel) return;
+ Object.keys(ACTIVITY_GUIDE).forEach(k=>{const o=document.createElement('option'); o.value=k; o.textContent=k; sel.appendChild(o);});
+ renderAppendixGuide();
+}
+function renderActivityGuide(){
+ const sel=document.getElementById('workActivity'); const box=document.getElementById('activityGuide');
+ if(!sel||!box) return;
+ const key=sel.value; const g=ACTIVITY_GUIDE[key];
+ if(!g){box.innerHTML='<h3>No process selected</h3><p class="small">Choose a process to show suggested high-energy hazards and controls.</p>'; return;}
+ const otherNote=key==='Other'?'<p class="status caution">Other selected: use these as baseline prompts only. Add task-specific hazards and controls before proceeding.</p>':'';
+ box.innerHTML=`<h3>${key}</h3>${otherNote}<div class="suggestionGrid"><div class="suggestionBox"><strong>Suggested High-Energy Hazards</strong><ul>${g.hazards.map(x=>`<li>${x}</li>`).join('')}</ul></div><div class="suggestionBox"><strong>Suggested Critical Controls</strong><ul>${g.controls.map(x=>`<li>${x}</li>`).join('')}</ul></div></div><p class="small" style="margin-top:10px">These are prompts only. Add, remove, or modify based on actual field conditions.</p>`;
+}
+function renderAppendixGuide(){
+ const box=document.getElementById('appendixGuide'); if(!box) return;
+ box.innerHTML=Object.entries(ACTIVITY_GUIDE).map(([key,g])=>`<details style="margin:8px 0"><summary>${key}</summary><div class="suggestionGrid"><div class="suggestionBox"><strong>Suggested High-Energy Hazards</strong><ul>${g.hazards.map(x=>`<li>${x}</li>`).join('')}</ul></div><div class="suggestionBox"><strong>Suggested Critical Controls</strong><ul>${g.controls.map(x=>`<li>${x}</li>`).join('')}</ul></div></div></details>`).join('');
+}
+function showSuggestedHazards(){
+ const wizard=document.getElementById('smartProcessWizard');
+ if(wizard){wizard.scrollIntoView({behavior:'smooth',block:'start'}); const sel=document.getElementById('workActivity'); if(sel) sel.focus();}
+}
+function scrollToHazardIdentification(){
+ const target=document.getElementById('hazardIdentification');
+ if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function rowField(row,prefix,field){
+ const i=row?.dataset?.idx;
+ return i==null?null:row.querySelector(`[name="${prefix}_${i}_${field}"]`);
+}
+function setRowField(row,prefix,field,value){
+ const e=rowField(row,prefix,field);
+ if(!e) return;
+ if(e.tagName==='SELECT' && value && ![...e.options].some(o=>o.value===value || o.textContent===value)){
+   const opt=document.createElement('option'); opt.value=value; opt.textContent=value; e.appendChild(opt);
+ }
+ e.value=value ?? '';
+}
+function isBlankWorkRow(row){
+ return ['hazard','present','hazardSource','comments'].every(f=>!(rowField(row,'work',f)?.value||'').trim());
+}
+function isBlankControlRow(row){
+ return ['hazard','equipmentType','hazardSource','siteControl1','siteControl2','siteControl3','siteControl4','siteControl5','direct1','direct2','direct3','direct4','direct5','directComments','indirect1','indirect2','indirect3','indirect4','indirect5','indirectComments','effective','comments'].every(f=>!(rowField(row,'ctrl',f)?.value||'').trim());
+}
+function findBlankRow(selector,testFn){
+ return [...document.querySelectorAll(selector)].find(testFn);
+}
+function countPopulatedWorkHazards(){
+ return [...document.querySelectorAll('.workRow')].filter(r=>(rowField(r,'work','hazard')?.value||'').trim()).length;
+}
+function useSuggestedHazards(){
+ const key=document.getElementById('workActivity')?.value; const g=ACTIVITY_GUIDE[key];
+ if(!g) return alert('Select a work activity/process first.');
+ const suggestedHazards=[...new Set(g.hazards)];
+ const suggestedControls=[...new Set(g.controls)];
+ const existingWork=new Set([...document.querySelectorAll('.workRow')].map(r=>(rowField(r,'work','hazard')?.value||'').trim()).filter(Boolean));
+ let addedWork=0, skippedWork=0;
+ suggestedHazards.forEach(h=>{
+   if(existingWork.has(h)){skippedWork++; return;}
+   let row=findBlankRow('.workRow',isBlankWorkRow);
+   if(!row){addWorkRow(); row=[...document.querySelectorAll('.workRow')].at(-1);}
+   setRowField(row,'work','hazard',h);
+   setRowField(row,'work','present','Yes');
+   setRowField(row,'work','hazardSource','');
+   setRowField(row,'work','comments','');
+   existingWork.add(h); addedWork++;
+ });
+ const existingControls=new Set([...document.querySelectorAll('.controlRow')].map(r=>(rowField(r,'ctrl','hazard')?.value||'').trim()).filter(Boolean));
+ let addedControls=0, skippedControls=0;
+ suggestedHazards.forEach(h=>{
+   if(existingControls.has(h)){skippedControls++; return;}
+   let row=findBlankRow('.controlRow',isBlankControlRow);
+   if(!row){addControlRow(); row=[...document.querySelectorAll('.controlRow')].at(-1);}
+   setRowField(row,'ctrl','hazard',h);
+   updateControlDropdowns(row);
+   setRowField(row,'ctrl','equipmentType','');
+   setRowField(row,'ctrl','hazardSource','');
+   setRowField(row,'ctrl','siteControl1','');
+   setRowField(row,'ctrl','direct1','Other direct control');
+   setRowField(row,'ctrl','directComments','');
+   setRowField(row,'ctrl','indirect1','JSA / FLHA reviewed with crew');
+   setRowField(row,'ctrl','indirectComments','');
+   setRowField(row,'ctrl','effective','');
+   existingControls.add(h); addedControls++;
+ });
+ const populated=countPopulatedWorkHazards();
+ const totalHe=document.getElementById('totalHeHazards');
+ const identified=document.getElementById('heHazardsIdentified');
+ if(totalHe && Number(totalHe.value||0)<populated) totalHe.value=populated;
+ if(identified && Number(identified.value||0)<populated) identified.value=populated;
+ calc();
+ alert(`Suggested hazards applied. Added ${addedWork} hazard row(s) and ${addedControls} control verification row(s). ${skippedWork+skippedControls? 'Skipped existing duplicate entries.':''}`);
+}
+function addWorkRow(data={}){
+ const i=workIndex++;
+ const div=document.createElement('div');
+ div.className='tableRow workRow';
+ div.dataset.idx=i;
+ div.innerHTML=`<div><label>High Energy Hazard</label><select name="work_${i}_hazard">${opt(DATA.hazards,'Select high energy hazard')}</select></div><div><label>Present?</label><select name="work_${i}_present"><option></option><option>Yes</option><option>No</option><option>N/A</option></select></div><div><label>Hazard Source</label><input type="text" name="work_${i}_hazardSource" placeholder="e.g., 8 in. line, MCC bucket, suspended load"></div><div><label>Comments</label><textarea name="work_${i}_comments"></textarea><button type="button" class="secondary noPrint" onclick="this.closest('.workRow').remove();calc()">Remove</button></div>`;
+ document.getElementById('workRows').appendChild(div);
+ Object.entries(data).forEach(([k,v])=>{let e=div.querySelector(`[name="work_${i}_${k}"]`); if(e)e.value=v});
+ calc();
+ return div;
+}
+
+let controlIndex=0;
+function addControlRow(data={}){
+ const i=controlIndex++; const div=document.createElement('div'); div.className='tableRow controlRow'; div.dataset.idx=i;
+ div.innerHTML=`<div><label>Hazard Identified</label><select name="ctrl_${i}_hazard" onchange="updateControlDropdowns(this.closest('.controlRow'));calc()">${opt(DATA.hazards,'Select hazard')}</select><label>Equipment Type</label><select name="ctrl_${i}_equipmentType">${equipmentTypeOpts('Select equipment type')}</select><label>Hazard Source</label><textarea name="ctrl_${i}_hazardSource" placeholder="e.g., MCC-2 bucket, 8 in. sour gas line, suspended pipe joint"></textarea></div><div class="controlBlock"><h3>Direct Controls</h3>${[1,2,3,4,5].map(n=>`<label>Direct Control ${n}</label><select name="ctrl_${i}_direct${n}">${directOpts('', 'Select direct control '+n)}</select>`).join('')}<label>Direct Control Comments</label><textarea name="ctrl_${i}_directComments"></textarea></div><div class="controlBlock"><h3>Indirect Controls</h3>${[1,2,3,4,5].map(n=>`<label>Indirect Control ${n}</label><select name="ctrl_${i}_indirect${n}">${indirectOpts('', 'Select indirect control '+n)}</select>`).join('')}<label>Indirect Control Comments</label><textarea name="ctrl_${i}_indirectComments"></textarea></div><div><label>Additional / Site-Specific Controls</label>${[1,2,3,4,5].map(n=>`<select name="ctrl_${i}_siteControl${n}">${siteControlOpts('', n===1?'Select hazard first':'Optional additional/site-specific control')}</select>`).join('')}<label>Effective?</label><select name="ctrl_${i}_effective"><option></option><option>Yes</option><option>No</option><option>N/A</option></select><label>Overall Comments / Control Gap</label><textarea name="ctrl_${i}_comments"></textarea><button type="button" class="secondary noPrint" onclick="this.closest('.controlRow').remove();calc()">Remove</button></div>`;
+ document.getElementById('controlRows').appendChild(div); Object.entries(data).forEach(([k,v])=>{let e=div.querySelector(`[name="ctrl_${i}_${k}"]`); if(e)e.value=v}); updateControlDropdowns(div); if(data.siteControl) setRowField(div,'ctrl','siteControl1',data.siteControl); calc();
+ return div;
+}
+
+function clampNumber(v,min=0,max=999){
+ v=parseInt(v,10);
+ if(Number.isNaN(v)) return 0;
+ return Math.max(min,Math.min(max,v));
+}
+function percentValue(part,total){
+ part=clampNumber(part); total=clampNumber(total);
+ if(total<=0) return 0;
+ return Math.round((Math.min(part,total)/total)*100);
+}
+
+function anyControlSelected(i, type){
+ for(let n=1;n<=5;n++) if(document.querySelector(`[name="ctrl_${i}_${type}${n}"]`)?.value) return true;
+ return false;
+}
+function selectedControls(i, type){
+ const out=[];
+ for(let n=1;n<=5;n++){ const v=document.querySelector(`[name="ctrl_${i}_${type}${n}"]`)?.value; if(v) out.push(v); }
+ return out;
+}
+
+function updateHazardPercentages(){
+ const totalHazardsEl=document.getElementById('totalHeHazards');
+ const identifiedHazardsEl=document.getElementById('heHazardsIdentified');
+ const totalEnergyEl=document.getElementById('totalEnergySources');
+ const understoodEnergyEl=document.getElementById('energySourcesUnderstood');
+ if(!totalHazardsEl||!identifiedHazardsEl||!totalEnergyEl||!understoodEnergyEl) return;
+
+ const totalHazards=clampNumber(totalHazardsEl.value);
+ let identifiedHazards=clampNumber(identifiedHazardsEl.value,0,totalHazards || 999);
+ const totalEnergy=clampNumber(totalEnergyEl.value);
+ let understoodEnergy=clampNumber(understoodEnergyEl.value,0,totalEnergy || 999);
+
+ if(totalHazards>0 && identifiedHazards>totalHazards){identifiedHazards=totalHazards; identifiedHazardsEl.value=totalHazards;}
+ if(totalEnergy>0 && understoodEnergy>totalEnergy){understoodEnergy=totalEnergy; understoodEnergyEl.value=totalEnergy;}
+
+ const hazardPct=percentValue(identifiedHazards,totalHazards);
+ const energyPct=percentValue(understoodEnergy,totalEnergy);
+ const hazardGap=Math.max(totalHazards-identifiedHazards,0);
+ const energyGap=Math.max(totalEnergy-understoodEnergy,0);
+
+ document.getElementById('mHighEnergyIdentified').textContent=hazardPct+'%';
+ document.getElementById('mEnergyUnderstood').textContent=energyPct+'%';
+ const hazardGapEl=document.getElementById('mHazardGap');
+ if(hazardGapEl) hazardGapEl.textContent=hazardGap;
+ const energyGapEl=document.getElementById('mEnergyGap');
+ if(energyGapEl) energyGapEl.textContent=energyGap;
+ const sifReview=document.querySelector('[name="sif_review_completed"]:checked')?.value||'No';
+ const sifReviewStatus=document.getElementById('mSifReviewStatus');
+ if(sifReviewStatus) sifReviewStatus.textContent=sifReview;
+ const directRequired=[...document.querySelectorAll('.controlRow')].filter(r=>{
+   const i=r.dataset.idx; return anyControlSelected(i,'direct');
+ }).length;
+ const directVerified=[...document.querySelectorAll('.controlRow')].filter(r=>{
+   const i=r.dataset.idx; const eff=document.querySelector(`[name="ctrl_${i}_effective"]`)?.value; return eff==='Yes' && anyControlSelected(i,'direct');
+ }).length;
+ const indirectRequired=[...document.querySelectorAll('.controlRow')].filter(r=>{
+   const i=r.dataset.idx; return anyControlSelected(i,'indirect');
+ }).length;
+ const indirectVerified=[...document.querySelectorAll('.controlRow')].filter(r=>{
+   const i=r.dataset.idx; const eff=document.querySelector(`[name="ctrl_${i}_effective"]`)?.value; return eff==='Yes' && anyControlSelected(i,'indirect');
+ }).length;
+ const directSummary=document.getElementById('mSifDirectSummary');
+ if(directSummary) directSummary.textContent=`${directVerified}/${directRequired}`;
+ const indirectSummary=document.getElementById('mSifIndirectSummary');
+ if(indirectSummary) indirectSummary.textContent=`${indirectVerified}/${indirectRequired}`;
+ const sifSummary=document.getElementById('mSifSummaryStatus');
+ if(sifSummary){
+   if(sifReview!=='Yes') sifSummary.textContent='Pending';
+   else if(hazardGap>0||energyGap>0) sifSummary.textContent='Open gaps';
+   else sifSummary.textContent='Reviewed';
+ }
+}
+
+
+function updateDeficiencies(){
+ const container=document.getElementById('deficiencySummary');
+ if(!container) return;
+ const items=[];
+
+ const pctText=id=>document.getElementById(id)?.textContent||'0%';
+ const pctNum=id=>parseInt(pctText(id),10)||0;
+ const val=id=>document.getElementById(id)?.value||'0';
+
+ const hazardGap=parseInt(document.getElementById('mHazardGap')?.textContent||'0',10)||0;
+ const energyGap=parseInt(document.getElementById('mEnergyGap')?.textContent||'0',10)||0;
+
+ if(hazardGap>0){
+   items.push({level:'stop',title:'High-energy hazard identification gap',detail:`${hazardGap} high-energy hazard(s) were not identified. Identified ${val('heHazardsIdentified')} of ${val('totalHeHazards')} hazards (${pctText('mHighEnergyIdentified')}).`,action:'Follow-up: re-walk the work front, review task steps with the crew, update JSA/FLHA, and confirm missing hazards are controlled.'});
+ }
+ if(energyGap>0){
+   items.push({level:'stop',title:'Energy source understanding gap',detail:`${energyGap} energy source(s) were not clearly understood by the crew. Understood ${val('energySourcesUnderstood')} of ${val('totalEnergySources')} sources (${pctText('mEnergyUnderstood')}).`,action:'Follow-up: stop and re-brief the crew on each energy source, isolation point, stored energy concern, and line-of-fire exposure.'});
+ }
+ const sifReview=document.querySelector('[name="sif_review_completed"]:checked')?.value||'No';
+ if(sifReview!=='Yes'){
+   items.push({level:'stop',title:'Crew SIF review not confirmed',detail:'The crew has not confirmed review of the Serious Injury/Fatality potential and related critical controls.',action:'Follow-up: complete the SIF review with the crew, confirm life-critical controls, and document any stop-work triggers before work proceeds.'});
+ }
+
+ [...document.querySelectorAll('input[type=radio][value=No]:checked')].forEach(r=>{
+   const row=r.closest('.row');
+   const q=row?.querySelector('.q')?.textContent||r.name;
+   items.push({level:'stop',title:'Pre-job verification marked No',detail:q,action:'Follow-up: resolve the No answer, document the correction, and verify with the supervisor/crew.'});
+ });
+
+ [...document.querySelectorAll('.workRow')].forEach(r=>{
+   const i=r.dataset.idx;
+   const hazard=document.querySelector(`[name="work_${i}_hazard"]`)?.value;
+   const present=document.querySelector(`[name="work_${i}_present"]`)?.value;
+   const source=document.querySelector(`[name="work_${i}_hazardSource"]`)?.value;
+   const comments=document.querySelector(`[name="work_${i}_comments"]`)?.value;
+   if(present==='Yes' && !source){
+     items.push({level:'caution',title:'Hazard source not documented',detail:`${hazard||'Unspecified hazard'} is present but the hazard source is blank.`,action:'Follow-up: document the specific equipment, energy source, or location creating the hazard.'});
+   }
+ });
+
+ [...document.querySelectorAll('.controlRow')].forEach(r=>{
+   const i=r.dataset.idx;
+   const hazard=document.querySelector(`[name="ctrl_${i}_hazard"]`)?.value;
+   const eff=document.querySelector(`[name="ctrl_${i}_effective"]`)?.value;
+   const directControls=selectedControls(i,'direct');
+   const indirectControls=selectedControls(i,'indirect');
+   const comments=document.querySelector(`[name="ctrl_${i}_comments"]`)?.value;
+   if(hazard && eff==='No'){
+     items.push({level:'stop',title:'HEIC control ineffective',detail:`${hazard} has HEIC controls marked ineffective.${comments?' Gap: '+comments:''}`,action:'Follow-up: add or improve direct controls first, verify effectiveness, and escalate if the hazard cannot be adequately controlled.'});
+   }
+   if(hazard && !eff){
+     items.push({level:'caution',title:'HEIC effectiveness not confirmed',detail:`${hazard} has no effectiveness confirmation.`,action:'Follow-up: verify the controls in the field and select Yes, No, or N/A.'});
+   }
+   if(hazard && directControls.length===0){
+     items.push({level:'stop',title:'No direct control selected',detail:`${hazard} has no direct HEIC control selected.`,action:'Follow-up: identify a direct control such as elimination, isolation, engineered barrier, LOTO, line blind, physical separation, or verified restraint.'});
+   }
+   if(hazard && directControls.length>0 && indirectControls.length===0){
+     items.push({level:'caution',title:'Indirect support control not selected',detail:`${hazard} has a direct control but no supporting indirect control selected.`,action:'Follow-up: confirm permit, JSA/FLHA review, supervisor verification, communication plan, inspection, or other support controls as applicable.'});
+   }
+ });
+
+ if(items.length===0){
+   container.innerHTML='<div class="deficiency ok"><h3>No deficiencies identified from current assessment data</h3><p>Continue to verify field conditions and update this assessment if conditions change.</p></div>';
+   return;
+ }
+
+ container.innerHTML=items.map((x,idx)=>`<div class="deficiency ${x.level==='stop'?'stop':''}"><h3>${idx+1}. ${x.title}</h3><p><strong>Finding:</strong> ${x.detail}</p><p><strong>Recommended follow-up:</strong> ${x.action}</p></div>`).join('');
+}
+
+function calc(){
+ updateHazardPercentages();
+ const rows=[...document.querySelectorAll('.controlRow')]; let hazards=0, effective=0, open=0;
+ rows.forEach(r=>{const i=r.dataset.idx; const h=document.querySelector(`[name="ctrl_${i}_hazard"]`)?.value; const eff=document.querySelector(`[name="ctrl_${i}_effective"]`)?.value; if(h){hazards++; if(eff==='Yes') effective++; if(eff==='No'||!eff) open++;} });
+ const score=hazards?Math.round((effective/hazards)*100):0; mHazards.textContent=hazards; mEffective.textContent=effective; mScore.textContent=score+'%'; mOpen.textContent=open;
+ const noChecks=[...document.querySelectorAll('input[type=radio][value=No]:checked')].length; const noWork=[...document.querySelectorAll('.workRow')].filter(r=>{const i=r.dataset.idx; return document.querySelector(`[name="work_${i}_control"]`)?.value==='No'}).length;
+ let status=scoreStatus; status.className='status '; if(hazards===0){status.className+='caution'; status.textContent='No high-energy hazards entered yet.'} else if(score===100&&noChecks===0&&noWork===0){status.className+='ok'; status.textContent='All identified high-energy hazards show effective HEIC controls. Confirm field conditions before starting work.'} else if(score>=80){status.className+='caution'; status.textContent='Assessment has control gaps or “No” answers. Resolve and document before work proceeds.'} else {status.className+='stop'; status.textContent='Stop / hold point: significant HEIC control gaps. Escalate to supervisor before work starts.'}
+ updateDeficiencies();
+}
+function formData(){const o={}; new FormData(document.getElementById('hecaForm')).forEach((v,k)=>o[k]=v); o._saved=new Date().toISOString(); o._highEnergyHazardsIdentifiedPercent=document.getElementById('mHighEnergyIdentified')?.textContent||'0%'; o._energySourcesUnderstoodPercent=document.getElementById('mEnergyUnderstood')?.textContent||'0%'; o._sifReviewCompleted=document.querySelector('[name="sif_review_completed"]:checked')?.value||'No'; o._sifReviewComments=document.querySelector('[name="sif_review_comments"]')?.value||''; o._sifDirectControlsVerified=document.getElementById('mSifDirectSummary')?.textContent||'0/0'; o._sifIndirectControlsVerified=document.getElementById('mSifIndirectSummary')?.textContent||'0/0'; o._totalHighEnergyHazardsPresent=document.getElementById('totalHeHazards')?.value||'0'; o._highEnergyHazardsIdentifiedCount=document.getElementById('heHazardsIdentified')?.value||'0'; o._totalEnergySourcesPresent=document.getElementById('totalEnergySources')?.value||'0'; o._energySourcesUnderstoodCount=document.getElementById('energySourcesUnderstood')?.value||'0'; o._unidentifiedHighEnergyHazardGap=document.getElementById('mHazardGap')?.textContent||'0'; o._energySourceUnderstandingGap=document.getElementById('mEnergyGap')?.textContent||'0'; o._deficiencySummaryText=document.getElementById('deficiencySummary')?.innerText||''; o._sigSupervisor=sigSupervisor.toDataURL(); o._sigAssessor=sigAssessor.toDataURL(); return o}
+function applyData(o){Object.entries(o).forEach(([k,v])=>{const e=document.querySelector(`[name="${CSS.escape(k)}"]`); if(e)e.value=v;}); if(o._sigSupervisor)drawImg('sigSupervisor',o._sigSupervisor); if(o._sigAssessor)drawImg('sigAssessor',o._sigAssessor); calc();}
+function saveLocal(){localStorage.setItem('hecaAssessment',JSON.stringify(formData())); alert('Saved on this device/browser.')}
+function loadLocal(){const s=localStorage.getItem('hecaAssessment'); if(!s) return alert('No saved assessment found.'); applyData(JSON.parse(s)); alert('Loaded.')}
+function exportJSON(){const blob=new Blob([JSON.stringify(formData(),null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='PSIPA_Assessment_'+new Date().toISOString().slice(0,10)+'.json'; a.click();}
+function importJSON(){const inp=document.createElement('input'); inp.type='file'; inp.accept='application/json'; inp.onchange=()=>{const f=inp.files[0]; const r=new FileReader(); r.onload=()=>applyData(JSON.parse(r.result)); r.readAsText(f)}; inp.click();}
+function resetForm(){if(confirm('Clear this assessment?')){document.getElementById('hecaForm').reset(); document.querySelector('[name=date]').valueAsDate=new Date(); document.getElementById('workRows').innerHTML=''; workIndex=0; for(let i=0;i<10;i++) addWorkRow(); clearSig('sigSupervisor'); clearSig('sigAssessor'); calc();}}
+
+function fieldValue(name){const e=document.querySelector(`[name="${CSS.escape(name)}"]`); return e?String(e.value||'').trim():''}
+function rowsToLines(selector,prefix){
+  const lines=[];
+  document.querySelectorAll(selector).forEach((row,idx)=>{
+    const hazard=row.querySelector(`[name^="${prefix}_"][name$="_hazard"]`)?.value||'';
+    if(!hazard) return;
+    const parts=[];
+    row.querySelectorAll('select,textarea,input').forEach(el=>{
+      if(el.type==='hidden' || !el.name || !el.value) return;
+      const label=(el.closest('div')?.querySelector('label')?.textContent||el.name).replace(/\s+/g,' ').trim();
+      parts.push(`${label}: ${el.value}`);
+    });
+    lines.push(`${idx+1}. ${hazard} — ${parts.join(' | ')}`);
+  });
+  return lines;
+}
+function assessmentEmailBody(){
+  calc();
+  const d=formData();
+  const workLines=rowsToLines('#workRows .tableRow','work');
+  const ctrlLines=rowsToLines('#controlRows .controlRow','ctrl');
+  const deficiencies=(document.getElementById('deficiencySummary')?.innerText||'None identified').trim();
+  const body=[];
+  body.push('Panterra Serious Injury Prevention Assessment (PSIPA)');
+  body.push('');
+  body.push('ASSESSMENT SUMMARY');
+  body.push(`Date: ${fieldValue('date') || new Date().toISOString().slice(0,10)}`);
+  body.push(`Client / Site: ${fieldValue('client') || fieldValue('site') || ''}`);
+  body.push(`Location / Work Front: ${fieldValue('location') || fieldValue('workfront') || ''}`);
+  body.push(`Work Activity: ${fieldValue('workActivity') || ''}`);
+  body.push('');
+  body.push('KEY METRICS');
+  body.push(`High-energy hazards identified: ${d._highEnergyHazardsIdentifiedCount || fieldValue('he_hazards_identified') || '0'} of ${d._totalHighEnergyHazardsPresent || fieldValue('total_he_hazards') || '0'} (${d._highEnergyHazardsIdentifiedPercent || '0%'})`);
+  body.push(`Energy sources understood: ${d._energySourcesUnderstoodCount || fieldValue('energy_sources_understood') || '0'} of ${d._totalEnergySourcesPresent || fieldValue('total_energy_sources') || '0'} (${d._energySourcesUnderstoodPercent || '0%'})`);
+  body.push(`Crew SIF review completed: ${d._sifReviewCompleted || fieldValue('sif_review_completed') || 'No'}`);
+  body.push(`Direct controls verified: ${d._sifDirectControlsVerified || document.getElementById('mSifDirectSummary')?.textContent || '0/0'}`);
+  body.push(`Indirect controls verified: ${d._sifIndirectControlsVerified || document.getElementById('mSifIndirectSummary')?.textContent || '0/0'}`);
+  body.push(`SIF review comments: ${d._sifReviewComments || fieldValue('sif_review_comments') || ''}`);
+  body.push('');
+  body.push('WORK FRONT REVIEW & CRITICAL CONTROL VERIFICATION');
+  body.push('Part A - Work Front Hazard Review / High-Energy Hazards');
+  body.push(workLines.length ? workLines.join('\n') : 'No populated hazard rows.');
+  body.push('');
+  body.push('Part B - HEIC Critical Control Verification');
+  body.push(ctrlLines.length ? ctrlLines.join('\n') : 'No populated control verification rows.');
+  body.push('');
+  body.push('DEFICIENCIES / FOLLOW-UP');
+  body.push(deficiencies);
+  body.push('');
+  body.push(`Follow-up owner: ${fieldValue('followup_owner')}`);
+  body.push(`Target date: ${fieldValue('followup_due_date')}`);
+  body.push(`Status: ${fieldValue('followup_status')}`);
+  body.push(`Actions: ${fieldValue('followup_actions')}`);
+  body.push('');
+  body.push('NOTE: For the full report with signatures/photos, use PDF / Print and attach the saved PDF to this email. Browser security prevents this app from automatically attaching a PDF without a backend email service.');
+  return body.join('\n');
+}
+async function emailAssessment(){
+  saveLocal();
+  const subject='PSIPA Assessment - '+(fieldValue('client')||fieldValue('site')||fieldValue('workActivity')||new Date().toISOString().slice(0,10));
+  const body=assessmentEmailBody();
+  if(navigator.share){
+    try{
+      await navigator.share({title:subject,text:body});
+      return;
+    }catch(e){/* user cancelled or share unavailable; fallback below */}
+  }
+  const mailto='mailto:?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+  if(mailto.length>1800){
+    const shortBody=body.slice(0,1500)+'\n\n[Email body shortened due to mail app size limits. Use Export for full JSON or PDF / Print for the full report.]';
+    window.location.href='mailto:?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(shortBody);
+  }else{
+    window.location.href=mailto;
+  }
+}
+
+function validateAndPrint(){let miss=[]; document.querySelectorAll('[data-required="1"]').forEach(e=>{e.classList.toggle('requiredMissing',!e.value); if(!e.value)miss.push(e.previousElementSibling.textContent)}); if(miss.length&&!confirm('Missing required fields: '+miss.join(', ')+'. Print anyway?')) return; calc(); window.print();}
+function setupPhotos(){photos.addEventListener('change',()=>{photoPreview.innerHTML=''; [...photos.files].slice(0,8).forEach(f=>{const img=document.createElement('img'); img.src=URL.createObjectURL(f); photoPreview.appendChild(img)})})}
+function setupSig(id){const c=document.getElementById(id),ctx=c.getContext('2d'); function size(){const r=c.getBoundingClientRect(); c.width=r.width*devicePixelRatio; c.height=140*devicePixelRatio; ctx.scale(devicePixelRatio,devicePixelRatio); ctx.lineWidth=2; ctx.lineCap='round';} size(); let draw=false,last=null; function pos(e){const r=c.getBoundingClientRect(),t=e.touches?e.touches[0]:e; return {x:t.clientX-r.left,y:t.clientY-r.top}} function start(e){draw=true;last=pos(e);e.preventDefault()} function move(e){if(!draw)return; const p=pos(e); ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last=p; e.preventDefault()} function end(){draw=false} c.addEventListener('mousedown',start); c.addEventListener('mousemove',move); window.addEventListener('mouseup',end); c.addEventListener('touchstart',start,{passive:false}); c.addEventListener('touchmove',move,{passive:false}); c.addEventListener('touchend',end);}
+function clearSig(id){const c=document.getElementById(id),ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height)}
+function drawImg(id,src){const c=document.getElementById(id),ctx=c.getContext('2d'),img=new Image(); img.onload=()=>ctx.drawImage(img,0,0,c.width/devicePixelRatio,140); img.src=src;}
+window.addEventListener('load',init);
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js').catch(function (err) {
+      console.warn('PSIPA service worker registration failed:', err);
+    });
+  });
+}
+</script>
+</body></html>

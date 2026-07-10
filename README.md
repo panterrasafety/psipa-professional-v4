@@ -1,12 +1,31 @@
-import {useEffect,useState} from 'react';
-import Header from './components/Header.jsx';
-import Dashboard from './components/Dashboard.jsx';
-import HazardPicker from './components/HazardPicker.jsx';
-import ControlPicker from './components/ControlPicker.jsx';
-import SifReview from './components/SifReview.jsx';
-import {Field,TextArea} from './components/Field.jsx';
-import {saveAssessment,loadAssessment,clearAssessment} from './utils/storage.js';
-import {openExecutiveSummary} from './utils/report.js';
-import './styles/app.css';
-const initial={project:'',client:'',location:'',supervisor:'',assessor:'',date:new Date().toISOString().slice(0,10),scope:'',processes:[],hazards:[],hazardCards:[],sifReview:'',sifComments:'',deficiencies:'',crew:''};
-export default function App(){const [data,setData]=useState(()=>loadAssessment()||initial);useEffect(()=>{saveAssessment(data)},[data]);useEffect(()=>{if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{})},[]);function reset(){if(confirm('Clear this assessment?')){clearAssessment();setData(initial)}}return <><Header/><main className="wrap"><Dashboard data={data}/><section className="card"><h2>Job Information</h2><div className="grid"><Field label="Project" value={data.project} onChange={v=>setData({...data,project:v})}/><Field label="Client" value={data.client} onChange={v=>setData({...data,client:v})}/><Field label="Location / Work Front" value={data.location} onChange={v=>setData({...data,location:v})}/><Field label="Supervisor" value={data.supervisor} onChange={v=>setData({...data,supervisor:v})}/><Field label="Assessor" value={data.assessor} onChange={v=>setData({...data,assessor:v})}/><Field label="Date" type="date" value={data.date} onChange={v=>setData({...data,date:v})}/></div><TextArea label="Work Scope" value={data.scope} onChange={v=>setData({...data,scope:v})}/></section><HazardPicker data={data} setData={setData}/><ControlPicker data={data} setData={setData}/><SifReview data={data} setData={setData}/><section className="card"><h2>Deficiencies & Corrective Actions</h2><TextArea label="Open Deficiencies / Corrective Actions" value={data.deficiencies} onChange={v=>setData({...data,deficiencies:v})}/></section><section className="card"><h2>Crew Verification</h2><TextArea label="Crew Members / Sign-Off Notes" value={data.crew} onChange={v=>setData({...data,crew:v})}/></section></main><div className="btnbar"><button onClick={()=>saveAssessment(data)}>Save</button><button className="secondary" onClick={()=>openExecutiveSummary(data)}>Executive Summary</button><button className="secondary" onClick={()=>window.print()}>PDF / Print</button><button className="danger" onClick={reset}>Clear</button></div></>}
+# PSIPA Professional v4.3 — Final Verified Release
+
+This release preserves the complete working PSIPA v3.3 assessment workflow in a Vite/Cloudflare Pages deployment package. The application logic remains consolidated in `index.html` to preserve all proven field functionality while using Vite for repeatable production builds.
+
+## Included
+
+- Complete assessment workflow
+- Smart Process Wizard and suggested hazards
+- Work Front Hazard Review & Critical Control Verification
+- Equipment Type and Hazard Source
+- Hazard-specific Direct, Indirect, and Site-Specific control pickers
+- Up to five selected controls per category
+- SIF review, deficiencies, photos, signatures, save/load, import/export, email summary, and PDF/print
+- PWA manifest, icons, and offline service worker
+
+## Verified commands
+
+```bash
+npm ci --no-audit --no-fund
+npm run build
+```
+
+## Cloudflare Pages settings
+
+- Framework preset: None
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Root directory: blank
+- `NODE_VERSION`: `20.19.0`
+
+Upload the contents of this folder to the root of the GitHub repository. Keep `package.json` and `package-lock.json`; remove any old `yarn.lock`.
