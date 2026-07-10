@@ -1,42 +1,20 @@
-# PSIPA Professional v4.0 – Frontend Rebuild
+# PSIPA Professional v4.0.1 — Production Frontend
 
-This release converts PSIPA from a single large HTML file into a proper React + Vite frontend project while preserving the approved compact 11 pt field-app layout and workflow.
+React + Vite frontend for the Panterra Serious Injury Prevention Assessment.
 
-## What is included
+## Cloudflare Pages
 
-- React + Vite project structure
-- Mobile-first compact layout
-- PWA manifest and service worker
-- Smart Process Wizard
-- High Energy Hazard selection
-- Work Front Hazard Review & Critical Control Verification
-- Equipment Type and Hazard Source fields
-- Hazard-specific Direct, Indirect, and Site-Specific control pickers
-- Up to 5 controls per control group
-- SIF Review Confirmation
-- Local auto-save using browser local storage
-- Executive Summary report view
-- PDF/Print support
+- Framework preset: None (or Vite if available)
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Root directory: leave blank
+- Recommended Node version environment variable: `NODE_VERSION=20`
 
-## Development
+## Local verification
 
 ```bash
-npm install
-npm run dev
-```
-
-## Production build
-
-```bash
+npm ci
 npm run build
 ```
 
-Cloudflare build settings:
-
-- Framework preset: Vite
-- Build command: `npm run build`
-- Build output directory: `dist`
-
-## Version
-
-PSIPA Professional v4.0 – Frontend Rebuild
+The production output is generated in `dist/`.
