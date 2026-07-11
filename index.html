@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Panterra PSIPA">
-<title>PSIPA Professional v4.3.1</title>
+<title>PSIPA Professional v4.3.2</title>
 <style>
 :root{--bg:#f4f6f8;--card:#fff;--ink:#142033;--muted:#667085;--line:#d8dee8;--brand:#12355b;--accent:#0f766e;--warn:#b45309;--bad:#b42318;--good:#027a48;--chip:#eef4ff;}
 *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;font-size:11pt;line-height:1.35;padding-bottom:72px} 
@@ -96,6 +96,16 @@ canvas { height: 110px !important; }
 #workFrontCriticalControlSection details{border:1px solid var(--line);border-radius:9px;padding:7px;margin:6px 0;background:#fbfcfe}
 #workFrontCriticalControlSection summary{font-size:11pt;font-weight:750;color:var(--brand);cursor:pointer}
 #workFrontCriticalControlSection details[open] summary{margin-bottom:5px}
+
+
+/* Reusable dynamic control picker */
+.dynamicControlPicker{display:grid;gap:6px;margin-bottom:7px}
+.dynamicControlItem{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;align-items:end}
+.dynamicControlItem label{grid-column:1/-1;margin-bottom:0}
+.dynamicControlItem select{min-width:0}
+.dynamicControlItem .removeControlBtn{background:#fee4e2;color:var(--bad);padding:6px 8px}
+.addControlBtn{width:100%;margin-top:2px;background:#e6edf5;color:var(--brand)}
+@media(max-width:520px){.dynamicControlItem{grid-template-columns:1fr}.dynamicControlItem .removeControlBtn{width:100%}}
 
 </style>
 
@@ -292,20 +302,46 @@ function refreshSelectOptions(sel, html){
  if(current && [...sel.options].some(o=>o.value===current || o.textContent===current)) sel.value=current;
  else sel.value='';
 }
-function updateSiteControlDropdown(row){
- updateControlDropdowns(row);
+function updateSiteControlDropdown(row){ updateControlDropdowns(row); }
+function controlPickerOptions(type,hazard,placeholder){
+ if(type==='direct') return directOpts(hazard,placeholder||'Select direct control');
+ if(type==='indirect') return indirectOpts(hazard,placeholder||'Select indirect control');
+ return siteControlOpts(hazard,placeholder||'Select additional/site-specific control');
 }
+function pickerLabel(type){return type==='direct'?'Direct Control':type==='indirect'?'Indirect Control':'Site-Specific Control';}
+function pickerFieldPrefix(type){return type==='site'?'siteControl':type;}
+function renumberControlPicker(container){
+ const row=container.closest('.controlRow'), i=row.dataset.idx, type=container.dataset.controlType, prefix=pickerFieldPrefix(type);
+ [...container.querySelectorAll('.dynamicControlItem')].forEach((item,idx)=>{
+   const n=idx+1, label=item.querySelector('label'), sel=item.querySelector('select'), remove=item.querySelector('.removeControlBtn');
+   label.textContent=pickerLabel(type)+' '+n; sel.name=`ctrl_${i}_${prefix}${n}`; if(remove) remove.hidden=(n===1);
+ });
+}
+function addControlSelect(target,type,value=''){
+ const container=target.classList?.contains('dynamicControlPicker')?target:target.closest('.controlBlock, .siteControlBlock').querySelector(`.dynamicControlPicker[data-control-type="${type}"]`);
+ const row=container.closest('.controlRow'), hazard=rowField(row,'ctrl','hazard')?.value||'';
+ const item=document.createElement('div'); item.className='dynamicControlItem';
+ item.innerHTML=`<label></label><select>${controlPickerOptions(type,hazard,'Select '+pickerLabel(type).toLowerCase())}</select><button type="button" class="removeControlBtn noPrint" onclick="removeControlSelect(this)">Remove</button>`;
+ container.insertBefore(item,container.querySelector('.addControlBtn')); renumberControlPicker(container);
+ const sel=item.querySelector('select'); if(value){if(![...sel.options].some(o=>o.value===value)){const o=document.createElement('option');o.value=value;o.textContent=value;sel.appendChild(o)} sel.value=value;}
+ calc(); return item;
+}
+function removeControlSelect(button){
+ const container=button.closest('.dynamicControlPicker'), items=container.querySelectorAll('.dynamicControlItem');
+ if(items.length<=1){items[0].querySelector('select').value='';return calc();}
+ button.closest('.dynamicControlItem').remove(); renumberControlPicker(container); calc();
+}
+function createControlPicker(row,type,values=[]){
+ const container=row.querySelector(`.dynamicControlPicker[data-control-type="${type}"]`); if(!container)return;
+ container.innerHTML=`<button type="button" class="addControlBtn noPrint" onclick="addControlSelect(this,'${type}')">+ Add ${pickerLabel(type)}</button>`;
+ (values.length?values:['']).forEach(v=>addControlSelect(container,type,v));
+}
+function ensureControlSelectCount(row,type,count){const c=row.querySelector(`.dynamicControlPicker[data-control-type="${type}"]`);while(c&&c.querySelectorAll('.dynamicControlItem').length<count)addControlSelect(c,type,'');}
 function updateControlDropdowns(row){
  const hazard=rowField(row,'ctrl','hazard')?.value||'';
- for(let n=1;n<=5;n++){
-   refreshSelectOptions(rowField(row,'ctrl','direct'+n), directOpts(hazard, 'Select direct control '+n));
-   refreshSelectOptions(rowField(row,'ctrl','indirect'+n), indirectOpts(hazard, 'Select indirect control '+n));
-   refreshSelectOptions(rowField(row,'ctrl','siteControl'+n), siteControlOpts(hazard, n===1?'Select additional/site-specific control':'Optional additional/site-specific control'));
- }
+ row.querySelectorAll('.dynamicControlPicker').forEach(c=>{const type=c.dataset.controlType;c.querySelectorAll('select').forEach((sel,idx)=>refreshSelectOptions(sel,controlPickerOptions(type,hazard,'Select '+pickerLabel(type).toLowerCase()+' '+(idx+1))));});
 }
-function updateAllSiteControlDropdowns(){
- document.querySelectorAll('.controlRow').forEach(updateSiteControlDropdown);
-}
+function updateAllSiteControlDropdowns(){document.querySelectorAll('.controlRow').forEach(updateSiteControlDropdown);}
 
 const idFields=['Project / Facility','Work Front / Area','Unit / Equipment','Specific Task','Date','Supervisor','Assessor','Contractor / Crew','Permit Number','JSA / FLHA Reference'];
 const riskClass={'Low':'ok','Moderate':'caution','High':'stop','Critical':'stop'};
@@ -434,10 +470,14 @@ function addWorkRow(data={}){
 
 let controlIndex=0;
 function addControlRow(data={}){
- const i=controlIndex++; const div=document.createElement('div'); div.className='tableRow controlRow'; div.dataset.idx=i;
- div.innerHTML=`<div><label>Hazard Identified</label><select name="ctrl_${i}_hazard" onchange="updateControlDropdowns(this.closest('.controlRow'));calc()">${opt(DATA.hazards,'Select hazard')}</select><label>Equipment Type</label><select name="ctrl_${i}_equipmentType">${equipmentTypeOpts('Select equipment type')}</select><label>Hazard Source</label><textarea name="ctrl_${i}_hazardSource" placeholder="e.g., MCC-2 bucket, 8 in. sour gas line, suspended pipe joint"></textarea></div><div class="controlBlock"><h3>Direct Controls</h3>${[1,2,3,4,5].map(n=>`<label>Direct Control ${n}</label><select name="ctrl_${i}_direct${n}">${directOpts('', 'Select direct control '+n)}</select>`).join('')}<label>Direct Control Comments</label><textarea name="ctrl_${i}_directComments"></textarea></div><div class="controlBlock"><h3>Indirect Controls</h3>${[1,2,3,4,5].map(n=>`<label>Indirect Control ${n}</label><select name="ctrl_${i}_indirect${n}">${indirectOpts('', 'Select indirect control '+n)}</select>`).join('')}<label>Indirect Control Comments</label><textarea name="ctrl_${i}_indirectComments"></textarea></div><div><label>Additional / Site-Specific Controls</label>${[1,2,3,4,5].map(n=>`<select name="ctrl_${i}_siteControl${n}">${siteControlOpts('', n===1?'Select hazard first':'Optional additional/site-specific control')}</select>`).join('')}<label>Effective?</label><select name="ctrl_${i}_effective"><option></option><option>Yes</option><option>No</option><option>N/A</option></select><label>Overall Comments / Control Gap</label><textarea name="ctrl_${i}_comments"></textarea><button type="button" class="secondary noPrint" onclick="this.closest('.controlRow').remove();calc()">Remove</button></div>`;
- document.getElementById('controlRows').appendChild(div); Object.entries(data).forEach(([k,v])=>{let e=div.querySelector(`[name="ctrl_${i}_${k}"]`); if(e)e.value=v}); updateControlDropdowns(div); if(data.siteControl) setRowField(div,'ctrl','siteControl1',data.siteControl); calc();
- return div;
+ const i=controlIndex++, div=document.createElement('div'); div.className='tableRow controlRow'; div.dataset.idx=i;
+ div.innerHTML=`<div><label>Hazard Identified</label><select name="ctrl_${i}_hazard" onchange="updateControlDropdowns(this.closest('.controlRow'));calc()">${opt(DATA.hazards,'Select hazard')}</select><label>Equipment Type</label><select name="ctrl_${i}_equipmentType">${equipmentTypeOpts('Select equipment type')}</select><label>Hazard Source</label><textarea name="ctrl_${i}_hazardSource" placeholder="e.g., MCC-2 bucket, 8 in. sour gas line, suspended pipe joint"></textarea></div><div class="controlBlock"><h3>Direct Controls</h3><div class="dynamicControlPicker" data-control-type="direct"></div><label>Direct Control Comments</label><textarea name="ctrl_${i}_directComments"></textarea></div><div class="controlBlock"><h3>Indirect Controls</h3><div class="dynamicControlPicker" data-control-type="indirect"></div><label>Indirect Control Comments</label><textarea name="ctrl_${i}_indirectComments"></textarea></div><div class="siteControlBlock"><label>Additional / Site-Specific Controls</label><div class="dynamicControlPicker" data-control-type="site"></div><label>Effective?</label><select name="ctrl_${i}_effective"><option></option><option>Yes</option><option>No</option><option>N/A</option></select><label>Overall Comments / Control Gap</label><textarea name="ctrl_${i}_comments"></textarea><button type="button" class="secondary noPrint" onclick="this.closest('.controlRow').remove();calc()">Remove Hazard Row</button></div>`;
+ document.getElementById('controlRows').appendChild(div);
+ const valuesFor=prefix=>Object.keys(data).filter(k=>new RegExp('^'+prefix+'\\d+$').test(k)).sort((a,b)=>parseInt(a.match(/\d+$/)[0])-parseInt(b.match(/\d+$/)[0])).map(k=>data[k]).filter(Boolean);
+ createControlPicker(div,'direct',valuesFor('direct')); createControlPicker(div,'indirect',valuesFor('indirect'));
+ const sites=valuesFor('siteControl'); if(data.siteControl&&!sites.length)sites.push(data.siteControl); createControlPicker(div,'site',sites);
+ Object.entries(data).forEach(([k,v])=>{if(/^(direct|indirect|siteControl)\d+$/.test(k)||k==='siteControl')return;const e=div.querySelector(`[name="ctrl_${i}_${k}"]`);if(e)e.value=v;});
+ updateControlDropdowns(div); calc(); return div;
 }
 
 function clampNumber(v,min=0,max=999){
@@ -451,14 +491,11 @@ function percentValue(part,total){
  return Math.round((Math.min(part,total)/total)*100);
 }
 
-function anyControlSelected(i, type){
- for(let n=1;n<=5;n++) if(document.querySelector(`[name="ctrl_${i}_${type}${n}"]`)?.value) return true;
- return false;
-}
-function selectedControls(i, type){
- const out=[];
- for(let n=1;n<=5;n++){ const v=document.querySelector(`[name="ctrl_${i}_${type}${n}"]`)?.value; if(v) out.push(v); }
- return out;
+function anyControlSelected(i,type){return selectedControls(i,type).length>0;}
+function selectedControls(i,type){
+ const row=document.querySelector(`.controlRow[data-idx="${i}"]`); if(!row)return [];
+ const pickerType=type==='siteControl'?'site':type;
+ return [...row.querySelectorAll(`.dynamicControlPicker[data-control-type="${pickerType}"] select`)].map(e=>e.value).filter(Boolean);
 }
 
 function updateHazardPercentages(){
@@ -594,7 +631,12 @@ function calc(){
  updateDeficiencies();
 }
 function formData(){const o={}; new FormData(document.getElementById('hecaForm')).forEach((v,k)=>o[k]=v); o._saved=new Date().toISOString(); o._highEnergyHazardsIdentifiedPercent=document.getElementById('mHighEnergyIdentified')?.textContent||'0%'; o._energySourcesUnderstoodPercent=document.getElementById('mEnergyUnderstood')?.textContent||'0%'; o._sifReviewCompleted=document.querySelector('[name="sif_review_completed"]:checked')?.value||'No'; o._sifReviewComments=document.querySelector('[name="sif_review_comments"]')?.value||''; o._sifDirectControlsVerified=document.getElementById('mSifDirectSummary')?.textContent||'0/0'; o._sifIndirectControlsVerified=document.getElementById('mSifIndirectSummary')?.textContent||'0/0'; o._totalHighEnergyHazardsPresent=document.getElementById('totalHeHazards')?.value||'0'; o._highEnergyHazardsIdentifiedCount=document.getElementById('heHazardsIdentified')?.value||'0'; o._totalEnergySourcesPresent=document.getElementById('totalEnergySources')?.value||'0'; o._energySourcesUnderstoodCount=document.getElementById('energySourcesUnderstood')?.value||'0'; o._unidentifiedHighEnergyHazardGap=document.getElementById('mHazardGap')?.textContent||'0'; o._energySourceUnderstandingGap=document.getElementById('mEnergyGap')?.textContent||'0'; o._deficiencySummaryText=document.getElementById('deficiencySummary')?.innerText||''; o._sigSupervisor=sigSupervisor.toDataURL(); o._sigAssessor=sigAssessor.toDataURL(); return o}
-function applyData(o){Object.entries(o).forEach(([k,v])=>{const e=document.querySelector(`[name="${CSS.escape(k)}"]`); if(e)e.value=v;}); if(o._sigSupervisor)drawImg('sigSupervisor',o._sigSupervisor); if(o._sigAssessor)drawImg('sigAssessor',o._sigAssessor); calc();}
+function applyData(o){
+ Object.keys(o).forEach(k=>{const m=k.match(/^ctrl_(\d+)_(direct|indirect|siteControl)(\d+)$/);if(!m)return;const idx=Number(m[1]);while(controlIndex<=idx)addControlRow();const row=document.querySelector(`.controlRow[data-idx="${idx}"]`);ensureControlSelectCount(row,m[2]==='siteControl'?'site':m[2],Number(m[3]));});
+ Object.entries(o).forEach(([k,v])=>{const e=document.querySelector(`[name="${CSS.escape(k)}"]`);if(e)e.value=v;}); updateAllSiteControlDropdowns();
+ Object.entries(o).forEach(([k,v])=>{const e=document.querySelector(`[name="${CSS.escape(k)}"]`);if(e)e.value=v;});
+ if(o._sigSupervisor)drawImg('sigSupervisor',o._sigSupervisor);if(o._sigAssessor)drawImg('sigAssessor',o._sigAssessor);calc();
+}
 function saveLocal(){localStorage.setItem('hecaAssessment',JSON.stringify(formData())); alert('Saved on this device/browser.')}
 function loadLocal(){const s=localStorage.getItem('hecaAssessment'); if(!s) return alert('No saved assessment found.'); applyData(JSON.parse(s)); alert('Loaded.')}
 function exportJSON(){const blob=new Blob([JSON.stringify(formData(),null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='PSIPA_Assessment_'+new Date().toISOString().slice(0,10)+'.json'; a.click();}
@@ -631,9 +673,9 @@ function executiveSummaryData(){
       equipment:value('equipmentType'),
       source:value('hazardSource'),
       effective:value('effective'),
-      direct:[1,2,3,4,5].map(n=>value('direct'+n)).filter(Boolean),
-      indirect:[1,2,3,4,5].map(n=>value('indirect'+n)).filter(Boolean),
-      site:[1,2,3,4,5].map(n=>value('siteControl'+n)).filter(Boolean),
+      direct:selectedControls(i,'direct'),
+      indirect:selectedControls(i,'indirect'),
+      site:selectedControls(i,'siteControl'),
       comments:value('comments')
     });
   });

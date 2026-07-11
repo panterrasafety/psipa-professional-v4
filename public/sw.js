@@ -1,4 +1,4 @@
-const CACHE_NAME='psipa-professional-v4.3.1-executive-pdf';
+const CACHE_NAME='psipa-professional-v4.3.2executive-pdf';
 const CORE=['/','/index.html','/manifest.json','/icons/icon-192.png','/icons/icon-512.png','/icons/apple-touch-icon.png'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE_NAME).then(cache=>Promise.allSettled(CORE.map(url=>cache.add(url)))).then(()=>self.skipWaiting()));
