@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Panterra PSIPA">
-<title>PSIPA Professional v4.3</title>
+<title>PSIPA Professional v4.3.1</title>
 <style>
 :root{--bg:#f4f6f8;--card:#fff;--ink:#142033;--muted:#667085;--line:#d8dee8;--brand:#12355b;--accent:#0f766e;--warn:#b45309;--bad:#b42318;--good:#027a48;--chip:#eef4ff;}
 *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;font-size:11pt;line-height:1.35;padding-bottom:72px} 
@@ -129,7 +129,7 @@ canvas { height: 110px !important; }
 <section class="card"><h2>Appendix A - Suggested High-Energy Hazards by Process</h2><p class="sub">Reference guide for common field activities. This appendix supports hazard identification and does not replace the job-specific PSIPA review.</p><div id="appendixGuide" class="activityPanel"></div></section><section class="card"><h2>Sign-Off</h2><div class="grid"><div><label>Supervisor Signature</label><canvas id="sigSupervisor"></canvas><button type="button" class="secondary noPrint" onclick="clearSig('sigSupervisor')">Clear Supervisor</button></div><div><label>Assessor Signature</label><canvas id="sigAssessor"></canvas><button type="button" class="secondary noPrint" onclick="clearSig('sigAssessor')">Clear Assessor</button></div></div><label style="margin-top:12px">Additional Notes / Actions Required</label><textarea name="finalNotes"></textarea></section>
 </form>
 </div>
-<div class="btnbar noPrint"><button type="button" onclick="validateAndPrint()">PDF / Print</button><button type="button" class="secondary" onclick="emailAssessment()">Email</button><button type="button" class="good" onclick="saveLocal()">Save</button><button type="button" class="secondary" onclick="loadLocal()">Load</button><button type="button" class="secondary" onclick="exportJSON()">Export</button><button type="button" class="secondary" onclick="importJSON()">Import</button><button type="button" class="danger" onclick="resetForm()">Reset</button></div>
+<div class="btnbar noPrint"><button type="button" onclick="validateAndPrint()">PDF / Print</button><button type="button" class="secondary" onclick="emailAssessment()">Email Executive PDF</button><button type="button" class="good" onclick="saveLocal()">Save</button><button type="button" class="secondary" onclick="loadLocal()">Load</button><button type="button" class="secondary" onclick="exportJSON()">Export</button><button type="button" class="secondary" onclick="importJSON()">Import</button><button type="button" class="danger" onclick="resetForm()">Reset</button></div>
 <script>
 const DATA={"identChecks": ["All high-energy hazards identified?", "Energy sources clearly understood by crew?", "JSA/FLHA completed and reviewed?", "Work front inspected before work begins?"], "workHazards": ["Mobile Equipment Interaction", "Suspended Loads", "Pressure Release", "Electrical Exposure", "Excavation / Ground Disturbance", "Confined Space", "Working at Height", "SIMOPS", "Hazardous Atmosphere", "Dropped Objects"], "directControls": ["Eliminate energy source", "Substitute lower-energy method", "De-energize equipment", "Mechanical isolation", "Electrical isolation", "LOTO applied and verified", "Line blind / spade installed", "Double block and bleed verified", "Depressurize / drain / vent / purge", "Stored energy released", "Mechanical restraint / blocking / cribbing", "Engineered physical barrier / fixed guarding", "Interlock / automatic shutdown", "Remote operation / remove worker from line of fire", "Certified anchor / fall protection system", "Engineered lift plan with rated rigging", "Vehicle / pedestrian physical separation", "Confined space positive isolation", "Continuous gas monitoring with alarm", "Grounding / bonding", "Other direct control"], "indirectControls": ["Permit issued and reviewed", "JSA / FLHA reviewed with crew", "Procedure / safe work practice followed", "Competent worker assigned", "Supervisor verification", "Spotter / signal person", "Warning signs / barricade tape", "Administrative exclusion zone", "Radio / hand-signal communication plan", "Pre-job safety meeting", "SIMOPS coordination", "Inspection / checklist completed", "PPE selected and worn", "Atmospheric test documented", "Emergency response / rescue plan ready", "Stop-work trigger identified", "Other indirect control"], "controls": ["Energy Elimination", "Mechanical Isolation", "Electrical Isolation", "Double Block and Bleed", "Line Blind/Spade", "LOTO Applied", "Stored Energy Release", "Pressure Bleed Off", "Grounding/Bonding", "Fixed Guarding", "Temporary Barrier", "Interlocked System", "Remote Operation", "Spotter Required", "Exclusion Zone", "Fall Protection System", "Vehicle Separation", "Engineered Lift Plan", "Confined Space Isolation", "Gas Monitoring", "Other"], "hazards": ["Electrical Energy", "Mechanical Energy", "Hydraulic Energy", "Pneumatic Energy", "Stored Energy", "Gravity", "Pressure Release", "Line of Fire", "Suspended Load", "Mobile Equipment", "Vehicle Interaction", "Rotating Equipment", "Excavation/Trenching", "Confined Space", "Working at Heights", "Dropped Objects", "Chemical Exposure", "Thermal Energy", "Steam", "Hot Work", "Fire / Explosion", "Compressed Gas Cylinders", "Static Electricity", "Vacuum Pressure", "Toxic Atmosphere", "Flammable Atmosphere", "Oxygen Deficiency", "Engulfment", "Benzene Exposure", "H2S Exposure", "Pyrophoric Material", "Ground Collapse", "Ground Failure", "Underground Utilities", "Water Ingress", "Structural Collapse", "Manual Handling", "Weather / Wind Exposure", "Blind Spots", "Rollover", "Noise", "Hose Failure", "Unexpected Start-up", "SIMOPS", "Radiation", "Other"], "likelihoods": ["5 - Almost Certain", "4 - Likely", "3 - Possible", "2 - Unlikely", "1 - Rare"], "consequences": ["A - Insignificant", "B - Low", "C - Moderate", "D - High", "E - Catastrophic"]};
 const ACTIVITY_GUIDE={
@@ -617,66 +617,194 @@ function rowsToLines(selector,prefix){
   });
   return lines;
 }
-function assessmentEmailBody(){
+function executiveSummaryData(){
   calc();
   const d=formData();
-  const workLines=rowsToLines('#workRows .tableRow','work');
-  const ctrlLines=rowsToLines('#controlRows .controlRow','ctrl');
-  const deficiencies=(document.getElementById('deficiencySummary')?.innerText||'None identified').trim();
-  const body=[];
-  body.push('Panterra Serious Injury Prevention Assessment (PSIPA)');
-  body.push('');
-  body.push('ASSESSMENT SUMMARY');
-  body.push(`Date: ${fieldValue('date') || new Date().toISOString().slice(0,10)}`);
-  body.push(`Client / Site: ${fieldValue('client') || fieldValue('site') || ''}`);
-  body.push(`Location / Work Front: ${fieldValue('location') || fieldValue('workfront') || ''}`);
-  body.push(`Work Activity: ${fieldValue('workActivity') || ''}`);
-  body.push('');
-  body.push('KEY METRICS');
-  body.push(`High-energy hazards identified: ${d._highEnergyHazardsIdentifiedCount || fieldValue('he_hazards_identified') || '0'} of ${d._totalHighEnergyHazardsPresent || fieldValue('total_he_hazards') || '0'} (${d._highEnergyHazardsIdentifiedPercent || '0%'})`);
-  body.push(`Energy sources understood: ${d._energySourcesUnderstoodCount || fieldValue('energy_sources_understood') || '0'} of ${d._totalEnergySourcesPresent || fieldValue('total_energy_sources') || '0'} (${d._energySourcesUnderstoodPercent || '0%'})`);
-  body.push(`Crew SIF review completed: ${d._sifReviewCompleted || fieldValue('sif_review_completed') || 'No'}`);
-  body.push(`Direct controls verified: ${d._sifDirectControlsVerified || document.getElementById('mSifDirectSummary')?.textContent || '0/0'}`);
-  body.push(`Indirect controls verified: ${d._sifIndirectControlsVerified || document.getElementById('mSifIndirectSummary')?.textContent || '0/0'}`);
-  body.push(`SIF review comments: ${d._sifReviewComments || fieldValue('sif_review_comments') || ''}`);
-  body.push('');
-  body.push('WORK FRONT REVIEW & CRITICAL CONTROL VERIFICATION');
-  body.push('Part A - Work Front Hazard Review / High-Energy Hazards');
-  body.push(workLines.length ? workLines.join('\n') : 'No populated hazard rows.');
-  body.push('');
-  body.push('Part B - HEIC Critical Control Verification');
-  body.push(ctrlLines.length ? ctrlLines.join('\n') : 'No populated control verification rows.');
-  body.push('');
-  body.push('DEFICIENCIES / FOLLOW-UP');
-  body.push(deficiencies);
-  body.push('');
-  body.push(`Follow-up owner: ${fieldValue('followup_owner')}`);
-  body.push(`Target date: ${fieldValue('followup_due_date')}`);
-  body.push(`Status: ${fieldValue('followup_status')}`);
-  body.push(`Actions: ${fieldValue('followup_actions')}`);
-  body.push('');
-  body.push('NOTE: For the full report with signatures/photos, use PDF / Print and attach the saved PDF to this email. Browser security prevents this app from automatically attaching a PDF without a backend email service.');
-  return body.join('\n');
+  const controls=[];
+  document.querySelectorAll('#controlRows .controlRow').forEach((row)=>{
+    const i=row.dataset.idx;
+    const value=(suffix)=>document.querySelector(`[name="ctrl_${i}_${suffix}"]`)?.value||'';
+    const hazard=value('hazard');
+    if(!hazard) return;
+    controls.push({
+      hazard,
+      equipment:value('equipmentType'),
+      source:value('hazardSource'),
+      effective:value('effective'),
+      direct:[1,2,3,4,5].map(n=>value('direct'+n)).filter(Boolean),
+      indirect:[1,2,3,4,5].map(n=>value('indirect'+n)).filter(Boolean),
+      site:[1,2,3,4,5].map(n=>value('siteControl'+n)).filter(Boolean),
+      comments:value('comments')
+    });
+  });
+  const status=(document.getElementById('scoreStatus')?.textContent||'Assessment not started').trim();
+  const process=fieldValue('workActivity');
+  return {
+    project:fieldValue('project_facility'),
+    workFront:fieldValue('work_front_area'),
+    equipment:fieldValue('unit_equipment'),
+    task:fieldValue('specific_task'),
+    date:fieldValue('date')||new Date().toISOString().slice(0,10),
+    supervisor:fieldValue('supervisor'),
+    assessor:fieldValue('assessor'),
+    contractor:fieldValue('contractor_crew'),
+    permit:fieldValue('permit_number'),
+    jsa:fieldValue('jsa_flha_reference'),
+    process,
+    hazards:document.getElementById('mHazards')?.textContent||'0',
+    effective:document.getElementById('mEffective')?.textContent||'0',
+    score:document.getElementById('mScore')?.textContent||'0%',
+    open:document.getElementById('mOpen')?.textContent||'0',
+    status,
+    sif:d._sifReviewCompleted||'No',
+    directSummary:d._sifDirectControlsVerified||'0/0',
+    indirectSummary:d._sifIndirectControlsVerified||'0/0',
+    controls,
+    deficiencies:(document.getElementById('deficiencySummary')?.innerText||'No deficiencies identified.').trim(),
+    followOwner:fieldValue('followup_owner'),
+    followDate:fieldValue('followup_due_date'),
+    followStatus:fieldValue('followup_status'),
+    followActions:fieldValue('followup_actions'),
+    finalNotes:fieldValue('finalNotes'),
+    generated:new Date().toLocaleString()
+  };
+}
+function pdfSafe(value){
+  return String(value??'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[\u2018\u2019]/g,"'").replace(/[\u201c\u201d]/g,'"').replace(/[\u2013\u2014]/g,'-').replace(/[^\x20-\x7E\n]/g,' ');
+}
+function pdfEscape(value){return pdfSafe(value).replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)')}
+function wrapPdfText(text,maxChars){
+  const result=[];
+  pdfSafe(text).split(/\n+/).forEach(paragraph=>{
+    const words=paragraph.trim().split(/\s+/).filter(Boolean);
+    if(!words.length){result.push('');return;}
+    let line='';
+    words.forEach(word=>{
+      if(!line){line=word;return;}
+      if((line+' '+word).length<=maxChars) line+=' '+word;
+      else {result.push(line);line=word;}
+    });
+    if(line) result.push(line);
+  });
+  return result;
+}
+function createExecutiveSummaryPdf(){
+  const d=executiveSummaryData();
+  const W=595,H=842,M=44;
+  let pages=[], ops=[], y=750, pageNumber=0;
+  const add=(s)=>ops.push(s);
+  const color=(rgb)=>`${rgb[0]} ${rgb[1]} ${rgb[2]}`;
+  function text(x,yy,value,size=10,bold=false,rgb=[0.08,0.12,0.18]){
+    add(`BT /${bold?'F2':'F1'} ${size} Tf ${color(rgb)} rg 1 0 0 1 ${x} ${yy} Tm (${pdfEscape(value)}) Tj ET`);
+  }
+  function rect(x,yy,w,h,rgb){add(`${color(rgb)} rg ${x} ${yy} ${w} ${h} re f`)}
+  function line(x1,y1,x2,y2,rgb=[0.75,0.79,0.84]){add(`${color(rgb)} RG 0.6 w ${x1} ${y1} m ${x2} ${y2} l S`)}
+  function pageHeader(){
+    pageNumber++;
+    rect(0,H-70,W,70,[0.071,0.208,0.357]);
+    text(M,H-35,'PSIPA PROFESSIONAL',17,true,[1,1,1]);
+    text(M,H-53,'EXECUTIVE SUMMARY',9,true,[0.82,0.9,0.98]);
+    text(W-150,H-48,`Page ${pageNumber}`,9,false,[1,1,1]);
+    y=H-94;
+  }
+  function finishPage(){
+    line(M,35,W-M,35);
+    text(M,20,`Generated ${pdfSafe(d.generated)} - PSIPA Professional`,7,false,[0.35,0.4,0.46]);
+    pages.push(ops.join('\n')); ops=[];
+  }
+  function newPage(){if(ops.length) finishPage(); pageHeader();}
+  function need(height){if(y-height<50)newPage()}
+  function section(title){need(32);rect(M,y-20,W-2*M,23,[0.91,0.94,0.97]);text(M+8,y-14,title,11,true,[0.071,0.208,0.357]);y-=32}
+  function row(label,value){
+    need(22);text(M,y,label,8,true,[0.3,0.35,0.4]);
+    const lines=wrapPdfText(value||'-',72);
+    lines.forEach((ln,idx)=>{if(idx>0) need(13);text(M+155,y,ln,9,false);y-=13});
+    line(M,y+5,W-M,y+5);y-=4;
+  }
+  function paragraph(value){
+    const lines=wrapPdfText(value||'-',92);
+    lines.forEach(ln=>{need(14);text(M,y,ln,9,false);y-=13});y-=3;
+  }
+  function bullet(value,indent=0){
+    const lines=wrapPdfText(value,82-indent);
+    lines.forEach((ln,idx)=>{need(14);text(M+indent,y,(idx===0?'• ':'  ')+ln,9,false);y-=13});
+  }
+  pageHeader();
+  const statusUpper=d.status.toUpperCase();
+  const statusColor=statusUpper.includes('STOP')?[0.72,0.08,0.08]:statusUpper.includes('GAP')||statusUpper.includes('RESOLVE')||statusUpper.includes('NO HIGH')?[0.94,0.62,0.06]:[0.08,0.55,0.28];
+  rect(M,y-42,W-2*M,48,statusColor);text(M+12,y-14,'OVERALL STATUS',9,true,[1,1,1]);text(M+12,y-32,d.status,13,true,[1,1,1]);y-=62;
+  section('Assessment Information');
+  row('Project / Facility',d.project);row('Work Front / Area',d.workFront);row('Unit / Equipment',d.equipment);row('Specific Task',d.task);row('Date',d.date);row('Process',d.process);row('Contractor / Crew',d.contractor);row('Supervisor',d.supervisor);row('Assessor',d.assessor);row('Permit / JSA-FLHA',[d.permit,d.jsa].filter(Boolean).join(' / '));
+  section('Verification Dashboard');
+  need(70);
+  const cards=[['Hazards',d.hazards],['Effective Controls',d.effective],['PSIPA Score',d.score],['Open Gaps',d.open]];
+  cards.forEach((c,i)=>{const x=M+i*126;rect(x,y-48,116,52,[0.96,0.97,0.98]);text(x+8,y-19,c[1],15,true,[0.071,0.208,0.357]);text(x+8,y-36,c[0],7,false,[0.3,0.35,0.4])});y-=65;
+  row('Crew SIF Review',d.sif);row('Direct Controls Verified',d.directSummary);row('Indirect Controls Verified',d.indirectSummary);
+  section('High Energy Hazards & Critical Controls');
+  if(!d.controls.length) paragraph('No populated critical-control verification rows.');
+  d.controls.forEach((c,idx)=>{
+    need(58);text(M,y,`${idx+1}. ${c.hazard}`,10,true,[0.071,0.208,0.357]);y-=14;
+    paragraph(`Source: ${[c.equipment,c.source].filter(Boolean).join(' - ')||'Not entered'} | Effective: ${c.effective||'Not verified'}`);
+    if(c.direct.length) bullet('Direct: '+c.direct.join('; '),10);
+    if(c.indirect.length) bullet('Indirect: '+c.indirect.join('; '),10);
+    if(c.site.length) bullet('Site-specific: '+c.site.join('; '),10);
+    y-=5;
+  });
+  section('Deficiencies & Corrective Actions');
+  paragraph(d.deficiencies||'No deficiencies identified.');
+  row('Follow-Up Owner',d.followOwner);row('Target Date',d.followDate);row('Status',d.followStatus);paragraph(d.followActions||'No corrective action plan entered.');
+  if(d.finalNotes){section('Final Notes');paragraph(d.finalNotes)}
+  section('Executive Recommendation');
+  paragraph(d.status);
+  paragraph('This executive summary provides management-level results. The complete assessment, supporting photos, signatures, and detailed verification records remain available in PSIPA Professional.');
+  finishPage();
+  const font1='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>';
+  const font2='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>';
+  const objects=[];
+  objects[1]='<< /Type /Catalog /Pages 2 0 R >>';
+  objects[3]=font1; objects[4]=font2;
+  const kids=[];
+  let obj=5;
+  pages.forEach(content=>{
+    const pageObj=obj++, contentObj=obj++;
+    kids.push(`${pageObj} 0 R`);
+    objects[pageObj]=`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${contentObj} 0 R >>`;
+    objects[contentObj]=`<< /Length ${content.length} >>\nstream\n${content}\nendstream`;
+  });
+  objects[2]=`<< /Type /Pages /Count ${pages.length} /Kids [${kids.join(' ')}] >>`;
+  let pdf='%PDF-1.4\n%PSIPA\n', offsets=[0];
+  for(let i=1;i<objects.length;i++){offsets[i]=pdf.length;pdf+=`${i} 0 obj\n${objects[i]}\nendobj\n`}
+  const xref=pdf.length;
+  pdf+=`xref\n0 ${objects.length}\n0000000000 65535 f \n`;
+  for(let i=1;i<objects.length;i++)pdf+=String(offsets[i]).padStart(10,'0')+' 00000 n \n';
+  pdf+=`trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+  return new Blob([pdf],{type:'application/pdf'});
+}
+function executivePdfFilename(){
+  const project=fieldValue('project_facility')||fieldValue('work_front_area')||'Assessment';
+  const clean=project.replace(/[^a-z0-9_-]+/gi,'_').replace(/^_+|_+$/g,'').slice(0,50)||'Assessment';
+  return `PSIPA_Executive_Summary_${clean}_${fieldValue('date')||new Date().toISOString().slice(0,10)}.pdf`;
+}
+function downloadExecutivePdf(blob,filename){
+  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);
 }
 async function emailAssessment(){
   saveLocal();
-  const subject='PSIPA Assessment - '+(fieldValue('client')||fieldValue('site')||fieldValue('workActivity')||new Date().toISOString().slice(0,10));
-  const body=assessmentEmailBody();
-  if(navigator.share){
-    try{
-      await navigator.share({title:subject,text:body});
-      return;
-    }catch(e){/* user cancelled or share unavailable; fallback below */}
+  calc();
+  const blob=createExecutiveSummaryPdf();
+  const filename=executivePdfFilename();
+  const file=new File([blob],filename,{type:'application/pdf'});
+  const d=executiveSummaryData();
+  const subject=`PSIPA Executive Summary - ${d.project||d.workFront||d.date}`;
+  const body=`Attached is the PSIPA Executive Summary PDF.\n\nOverall status: ${d.status}\nPSIPA score: ${d.score}\nHigh-energy hazards: ${d.hazards}\nOpen control gaps: ${d.open}\n\nGenerated by PSIPA Professional.`;
+  if(navigator.share && (!navigator.canShare || navigator.canShare({files:[file]}))){
+    try{await navigator.share({title:subject,text:body,files:[file]});return}catch(e){if(e?.name==='AbortError')return}
   }
-  const mailto='mailto:?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
-  if(mailto.length>1800){
-    const shortBody=body.slice(0,1500)+'\n\n[Email body shortened due to mail app size limits. Use Export for full JSON or PDF / Print for the full report.]';
-    window.location.href='mailto:?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(shortBody);
-  }else{
-    window.location.href=mailto;
-  }
+  downloadExecutivePdf(blob,filename);
+  const mailto='mailto:?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body+'\n\nThe PDF has been downloaded to this device. Attach '+filename+' to this email.');
+  setTimeout(()=>{window.location.href=mailto},400);
+  alert('The Executive Summary PDF was downloaded. Your email app will open next; attach the downloaded PDF if it was not attached automatically.');
 }
-
 function validateAndPrint(){let miss=[]; document.querySelectorAll('[data-required="1"]').forEach(e=>{e.classList.toggle('requiredMissing',!e.value); if(!e.value)miss.push(e.previousElementSibling.textContent)}); if(miss.length&&!confirm('Missing required fields: '+miss.join(', ')+'. Print anyway?')) return; calc(); window.print();}
 function setupPhotos(){photos.addEventListener('change',()=>{photoPreview.innerHTML=''; [...photos.files].slice(0,8).forEach(f=>{const img=document.createElement('img'); img.src=URL.createObjectURL(f); photoPreview.appendChild(img)})})}
 function setupSig(id){const c=document.getElementById(id),ctx=c.getContext('2d'); function size(){const r=c.getBoundingClientRect(); c.width=r.width*devicePixelRatio; c.height=140*devicePixelRatio; ctx.scale(devicePixelRatio,devicePixelRatio); ctx.lineWidth=2; ctx.lineCap='round';} size(); let draw=false,last=null; function pos(e){const r=c.getBoundingClientRect(),t=e.touches?e.touches[0]:e; return {x:t.clientX-r.left,y:t.clientY-r.top}} function start(e){draw=true;last=pos(e);e.preventDefault()} function move(e){if(!draw)return; const p=pos(e); ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last=p; e.preventDefault()} function end(){draw=false} c.addEventListener('mousedown',start); c.addEventListener('mousemove',move); window.addEventListener('mouseup',end); c.addEventListener('touchstart',start,{passive:false}); c.addEventListener('touchmove',move,{passive:false}); c.addEventListener('touchend',end);}
